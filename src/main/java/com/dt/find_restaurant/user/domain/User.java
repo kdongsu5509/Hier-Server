@@ -1,10 +1,15 @@
 package com.dt.find_restaurant.user.domain;
 
 import com.dt.find_restaurant.global.util.BaseTimeEntity;
+import com.dt.find_restaurant.post.repository.PostEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +37,9 @@ public class User extends BaseTimeEntity {
 
     @Column(name = "role", length = 20, nullable = false)
     private String role;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<PostEntity> posts = new ArrayList<>();
 
     private User(String email, String password, String koreanName, String role) {
         this.email = email;
