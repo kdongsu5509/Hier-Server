@@ -4,7 +4,6 @@ package com.dt.find_restaurant.image.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -50,7 +49,7 @@ public class ImageService {
         log.info("확장자 검증 : {}", extension);
 
         List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
-        if (extension == null || !allowedExtentionList.contains(extension)) {
+        if (extension.isEmpty() || !allowedExtentionList.contains(extension)) {
             throw new RuntimeException("허용되지 않는 파일 확장자입니다. 허용된 확장자: " + allowedExtentionList);
         }
     }
@@ -66,7 +65,7 @@ public class ImageService {
         metadata.setContentLength(file.getSize());
 
         // 이미지 파일 -> InputStream 변환
-        try (InputStream inputStream = file.getInputStream()) {
+        try {
             PutObjectRequest formattedImage = new PutObjectRequest(bucketName, s3FileName, file.getInputStream(),
                     metadata);
             amazonS3.putObject(formattedImage);

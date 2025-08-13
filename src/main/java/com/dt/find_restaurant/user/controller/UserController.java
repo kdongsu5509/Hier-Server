@@ -1,18 +1,22 @@
 package com.dt.find_restaurant.user.controller;
 
 import com.dt.find_restaurant.global.response.APIResponse;
+import com.dt.find_restaurant.security.jwt.component.CustomUserDetails;
 import com.dt.find_restaurant.user.domain.UserCommand;
 import com.dt.find_restaurant.user.domain.UserRequest;
 import com.dt.find_restaurant.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -56,5 +60,37 @@ public class UserController {
     public APIResponse<Void> signup(@RequestBody @Valid UserRequest.SignUp request) {
         userService.saveUser(UserCommand.Signup.of(request.getEmail(), request.getPassword(), request.getName()));
         return APIResponse.success();
+    }
+
+    @Operation(
+            summary = "프로필 이미지 변경",
+            description = "사용자의 프로필 이미지를 변경합니다."
+    )
+    @io.swagger.v3.oas.annotations.Parameter(
+            name = "imageUrl",
+            description = "변경할 프로필 이미지의 URL",
+            required = true
+    )
+    @ApiResponses(
+            value = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "프로필 이미지 변경 성공"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "잘못된 요청 (이미지 URL이 비어있거나 잘못된 형식)"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "서버 오류"
+                    )
+            }
+    )
+    @PostMapping("/profile-image")
+    public String changeProfileImage(@NotNull @RequestParam String imageUrl,
+                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
+        userService.chageProfileImage(imageUrl, userDetails.getUsername());
+        return imageUrl;
     }
 }
