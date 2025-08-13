@@ -8,8 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = " fortune-teller API 명세서",
-                description = "AI-Fortune-Teller Backend에서의 API에 대한 명세서입니다.",
+                title = "거제 맛집 API 명세서",
+                description = "거제 맛집 서비스 Backend에서의 API에 대한 명세서입니다.",
                 version = "v1.0.0"
         )
 )
