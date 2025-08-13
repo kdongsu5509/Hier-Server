@@ -17,6 +17,7 @@ public class JwtRepositoryImpl implements JwtRepository {
 
     @Override
     public JwtEntity save(JwtEntity jwtEntity) {
+        log.info("DB에 저장하는 Access 정보: {}", jwtEntity.getAccessToken());
         return jwtRepository.save(jwtEntity);
     }
 

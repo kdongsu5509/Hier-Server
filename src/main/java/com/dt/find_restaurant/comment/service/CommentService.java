@@ -39,8 +39,9 @@ public class CommentService {
                 comment.imageUrl(),
                 comment.text(),
                 comment.grade(),
-                comment.commentType().equals("NORMAL") ? CommentType.NORMAL : CommentType.REVIEW
+                comment.commentType().toString().equalsIgnoreCase("NORMAL") ? CommentType.NORMAL : CommentType.REVIEW
         );
+        postEntity.addCommentCount();
 
         // 댓글 저장
         return commentRepository.save(commentEntity);
@@ -64,5 +65,26 @@ public class CommentService {
 
         // 해당 게시글의 모든 댓글 조회
         return commentRepository.findAllByPost(postEntity);
+    }
+
+    public void deleteComment(UUID id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
+        );
+
+        comment.getPost().minusCommentCount();
+
+        // 댓글 삭제
+        commentRepository.delete(comment);
+    }
+
+    private Double calculateAverage(List<Comment> comments) {
+        if (comments.isEmpty()) {
+            return 0.0;
+        }
+        double totalGrade = comments.stream()
+                .mapToDouble(Comment::getGrade)
+                .sum();
+        return totalGrade / comments.size();
     }
 }

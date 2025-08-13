@@ -4,8 +4,6 @@ import com.dt.find_restaurant.comment.dto.CommentRequest;
 import com.dt.find_restaurant.comment.dto.CommentUpdateRequest;
 import com.dt.find_restaurant.comment.repository.Comment;
 import com.dt.find_restaurant.comment.service.CommentService;
-import com.dt.find_restaurant.post.dto.request.PostUpdateRequest;
-import com.dt.find_restaurant.post.repository.PostEntity;
 import com.dt.find_restaurant.security.jwt.component.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -82,5 +80,9 @@ public class CommentController {
     )
     public List<Comment> getAllCommentOfPost(@PathVariable Long postId) {
         return commentService.getAllCommentOfPost(postId);
+    }
+
+    public void deleteComment(@PathVariable UUID id) {
+        commentService.deleteComment(id);
     }
 }

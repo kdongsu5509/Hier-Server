@@ -119,8 +119,7 @@ public class JwtService {
                 (LocalDateTime) accessTokenInfos.get(JwtProperties.ACCESS_TOKEN_EXP),
                 (LocalDateTime) refreshTokenInfos.get(JwtProperties.REFRESH_TOKEN_EXP)
         );
-        jwtRepository.save(jwtEntity);
-        return jwtEntity;
+        return jwtRepository.save(jwtEntity);
     }
 
     private JwtEntity tokenValidateWithDBStoredThings(String token) {
@@ -134,6 +133,7 @@ public class JwtService {
             opt = jwtRepository.findJwtByRefreshToken(token);
             if (opt.isEmpty()) {
                 log.info("DB에 존재하지 않는 Token 입니다.");
+                log.info("조회한 Token 종류 : {} , 토큰 값 : {}", JwtProperties.TokenType.REFRESH, token);
                 return null;
             }
             kind = JwtProperties.TokenType.REFRESH;

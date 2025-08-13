@@ -53,26 +53,31 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
 
             if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                log.info("\n ===CORS preflight request, passing through without authentication.===\n");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             if (uri.equals(LOGIN_URL)) {
+                log.info("\n ===Login URL 접근, 인증 필터 패스.===\n");
                 filterChain.doFilter(req, res);
                 return;
             }
 
             if (isWhiteList(request)) {
+                log.info("\n ===화이트리스트 URL 접근, 인증 필터 패스.===\n");
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            log.info(uri.toString());
+            log.info("\n===접근한 URL : {}===\n", uri);
 
             String validAccessToken = jwtService.validateAccessToken(req);
             if (validAccessToken == null) {
+                log.warn("유효하지 않은 Access Token입니다. 리프레시 토큰으로 재발급 시도합니다.");
                 validAccessToken = jwtService.reissueAccessByRefresh(req).getRefreshToken();
                 if (validAccessToken == null) {
+                    log.warn("리프레시 토큰으로도 유효한 Access Token을 발급받지 못했습니다.");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
                     return;
                 }
@@ -116,7 +121,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 responseAt
         );
 
-        log.info("AccessLog : {}", JsonUtils.toJson(accessLog));
+        log.info("\nAccessLog : {}\n", JsonUtils.toJson(accessLog));
     }
 
     private boolean isWhiteList(HttpServletRequest request) {
