@@ -1,15 +1,11 @@
 package com.dt.find_restaurant.comment.service;
 
+import com.dt.find_restaurant.Pin.repository.PinEntity;
+import com.dt.find_restaurant.Pin.repository.PinRepository;
 import com.dt.find_restaurant.comment.dto.CommentRequest;
-import com.dt.find_restaurant.comment.dto.CommentUpdateRequest;
-import com.dt.find_restaurant.comment.repository.Comment;
+import com.dt.find_restaurant.comment.repository.CommentEntity;
+import com.dt.find_restaurant.comment.repository.CommentImageEntity;
 import com.dt.find_restaurant.comment.repository.CommentRepository;
-import com.dt.find_restaurant.comment.repository.CommentType;
-import com.dt.find_restaurant.post.repository.PostEntity;
-import com.dt.find_restaurant.post.repository.PostRepository;
-import com.dt.find_restaurant.user.domain.User;
-import com.dt.find_restaurant.user.repository.UserRepository;
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -21,70 +17,51 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final PinRepository pinRepository;
 
-    public Comment createComment(Long postId, CommentRequest comment, String userEmail) {
+    public CommentEntity createComment(UUID pinId, CommentRequest req) {
         // 게시글 조회
-        PostEntity postEntity = postRepository.findById(postId).orElseThrow(
+        PinEntity pinEntity = pinRepository.findById(pinId).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        // 사용자 조회
-        User user = userRepository.findByEmail(userEmail).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-        );
-        Comment commentEntity = Comment.create(
-                postEntity,
-                user,
-                comment.imageUrl(),
-                comment.text(),
-                comment.grade(),
-                comment.commentType().toString().equalsIgnoreCase("NORMAL") ? CommentType.NORMAL : CommentType.REVIEW
-        );
-        postEntity.addCommentCount();
 
+        CommentEntity commentEntity = CommentEntity.create(
+                req.creatorName(),
+                req.text(),
+                req.grade(),
+                pinEntity
+        );
+
+        //사진이 비어있지 않으면 이미지 엔티티 생성
+        if (!req.imageUrl().isEmpty()) {
+            for (String imageUrl : req.imageUrl()) {
+                CommentImageEntity commentImageEntity = CommentImageEntity.create(imageUrl);
+                commentEntity.addCommentImage(commentImageEntity);
+            }
+        }
         // 댓글 저장
         return commentRepository.save(commentEntity);
     }
 
-    public Comment updatePost(UUID id, @Valid CommentUpdateRequest reuqest) {
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
-
-        // 댓글 업데이트
-        comment.updateFrom(reuqest);
-
-        return commentRepository.save(comment);
-    }
-
-    public List<Comment> getAllCommentOfPost(Long postId) {
+    public List<CommentEntity> getAllCommentOfPost(UUID pinId) {
         // 게시글 조회
-        PostEntity postEntity = postRepository.findById(postId).orElseThrow(
+        PinEntity pinEntity = pinRepository.findById(pinId).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
 
         // 해당 게시글의 모든 댓글 조회
-        return commentRepository.findAllByPost(postEntity);
+        return commentRepository.findAllByPin(pinEntity);
     }
 
-    public void deleteComment(UUID id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(
+    public void deleteComment(UUID id, UUID pinId) {
+        CommentEntity commentEntity = commentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
         );
 
-        comment.getPost().minusCommentCount();
-
-        // 댓글 삭제
-        commentRepository.delete(comment);
-    }
-
-    private Double calculateAverage(List<Comment> comments) {
-        if (comments.isEmpty()) {
-            return 0.0;
+        if (commentEntity.getPin().getId() != pinId) {
+            throw new IllegalArgumentException("해당 댓글은 이 게시글에 속하지 않습니다.");
         }
-        double totalGrade = comments.stream()
-                .mapToDouble(Comment::getGrade)
-                .sum();
-        return totalGrade / comments.size();
+        // 댓글 삭제
+        commentRepository.delete(commentEntity);
     }
 }

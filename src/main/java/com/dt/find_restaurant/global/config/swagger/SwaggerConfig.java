@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @io.swagger.v3.oas.annotations.info.Info(title = " API 명세서",
-                description = "AI Fortune Teller 어플리케이션",
                 version = "v1"))
 @Configuration
 public class SwaggerConfig {

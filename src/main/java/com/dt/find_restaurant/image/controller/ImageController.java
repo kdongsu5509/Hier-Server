@@ -4,6 +4,7 @@ import com.dt.find_restaurant.image.service.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
         description = "이미지 관련 API"
 )
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/api/images")
 @RequiredArgsConstructor
 public class ImageController {
 
@@ -25,11 +26,11 @@ public class ImageController {
 
     @Operation(
             summary = "이미지 업로드",
-            description = "이미지를 업로드합니다. 파라미터에 파일을 포함해야 합니다."
+            description = "여러 이미지를 업로드합니다. 요청 파라미터에 파일들을 포함해야 합니다."
     )
     @io.swagger.v3.oas.annotations.Parameter(
-            name = "file",
-            description = "업로드할 이미지 파일",
+            name = "files",
+            description = "업로드할 이미지 파일들",
             required = true
     )
     @ApiResponses(
@@ -40,13 +41,14 @@ public class ImageController {
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "400",
-                            description = "잘못된 요청 (파일이 없거나 허용되지 않는 확장자)"
+                            description = "잘못된 요청 (파일이 비어있거나 잘못된 형식)"
                     )
             }
     )
     @PostMapping
-    public String uploadImage(@RequestParam("file") MultipartFile file) {
-        return imageService.uploadImage(file);
+    public List<String> uploadImages(@RequestParam("files") List<MultipartFile> files) {
+        // 서비스 계층의 메서드도 여러 파일을 처리하도록 변경된 메서드를 호출합니다.
+        return imageService.uploadImages(files);
     }
 
     @Operation(

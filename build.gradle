@@ -70,16 +70,6 @@ dependencies {
 
     //test database
     testImplementation 'com.h2database:h2'
-
-    //spring security
-    implementation("org.springframework.boot:spring-boot-starter-security")
-
-    //jwt
-    implementation("io.jsonwebtoken:jjwt-api:0.12.3")
-    implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
-    implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
-    implementation 'com.nimbusds:nimbus-jose-jwt:9.37'
-
 }
 
 dependencyManagement {
