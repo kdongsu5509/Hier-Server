@@ -18,16 +18,3 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.H2Dialect
-
-white-list:
-  paths:
-    - "/swagger-ui.html"
-    - "/swagger-ui/**"
-    - "/v3/api-docs/**"
-    - "/swagger-resources/**"
-    - "/webjars/**"
-    - "/reissue"
-    - "/user/signup/**"
-    - "/"
-    - "/actuator/**"
-#    - "/image/**"
