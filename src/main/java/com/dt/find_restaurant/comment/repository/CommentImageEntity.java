@@ -2,6 +2,7 @@ package com.dt.find_restaurant.comment.repository;
 
 import static jakarta.persistence.FetchType.LAZY;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +32,7 @@ public class CommentImageEntity {
 
     @Setter // 연관관계 편의 메서드에서 사용하기 위해 Setter 추가
     @ManyToOne(fetch = LAZY)
+    @JsonIgnore
     @JoinColumn(name = "comment_id")
     private CommentEntity comment;
 

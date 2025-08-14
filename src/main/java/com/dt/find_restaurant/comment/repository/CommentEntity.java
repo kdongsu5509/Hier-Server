@@ -4,6 +4,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import com.dt.find_restaurant.Pin.repository.PinEntity;
 import com.dt.find_restaurant.global.util.BaseTimeEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,6 +41,7 @@ public class CommentEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
     private List<CommentImageEntity> images = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "pin_id")
     private PinEntity pin;

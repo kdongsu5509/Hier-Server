@@ -1,17 +1,24 @@
 package com.dt.find_restaurant.comment.service;
 
+import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.COMMNET_NOT_FOUND;
+import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.PIN_NOT_FOUND;
+
 import com.dt.find_restaurant.Pin.repository.PinEntity;
 import com.dt.find_restaurant.Pin.repository.PinRepository;
 import com.dt.find_restaurant.comment.dto.CommentRequest;
 import com.dt.find_restaurant.comment.repository.CommentEntity;
 import com.dt.find_restaurant.comment.repository.CommentImageEntity;
 import com.dt.find_restaurant.comment.repository.CommentRepository;
+import com.dt.find_restaurant.global.exception.CustomeExceptions.CommentException;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -22,7 +29,7 @@ public class CommentService {
     public CommentEntity createComment(UUID pinId, CommentRequest req) {
         // 게시글 조회
         PinEntity pinEntity = pinRepository.findById(pinId).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                () -> new CommentException(PIN_NOT_FOUND.getMessage())
         );
 
         CommentEntity commentEntity = CommentEntity.create(
@@ -39,6 +46,7 @@ public class CommentService {
                 commentEntity.addCommentImage(commentImageEntity);
             }
         }
+        log.info("댓글 생성: {}", commentEntity);
         // 댓글 저장
         return commentRepository.save(commentEntity);
     }
@@ -46,22 +54,31 @@ public class CommentService {
     public List<CommentEntity> getAllCommentOfPost(UUID pinId) {
         // 게시글 조회
         PinEntity pinEntity = pinRepository.findById(pinId).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                () -> new CommentException(PIN_NOT_FOUND.getMessage())
         );
 
         // 해당 게시글의 모든 댓글 조회
         return commentRepository.findAllByPin(pinEntity);
     }
 
-    public void deleteComment(UUID id, UUID pinId) {
-        CommentEntity commentEntity = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
-        );
+    public void deleteComment(UUID pinId, UUID commentId) {
+        CommentEntity commentEntity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(COMMNET_NOT_FOUND.getMessage()));
 
-        if (commentEntity.getPin().getId() != pinId) {
-            throw new IllegalArgumentException("해당 댓글은 이 게시글에 속하지 않습니다.");
+        PinEntity pin = commentEntity.getPin();
+        if (pin == null || pin.getId() == null) {
+            log.info("핀 조회에 실패했습니다 (pin 또는 pin.id == null)");
+            throw new CommentException(PIN_NOT_FOUND.getMessage());
         }
-        // 댓글 삭제
+
+        // 값 비교로 변경
+        if (!Objects.equals(pin.getId(), pinId)) {
+            log.info("찾은 pinId: {}, 요청한 pinId: {}", pin.getId(), pinId);
+            log.info("여기서 핀 조회에 실패했습니다");
+            throw new CommentException(PIN_NOT_FOUND.getMessage());
+        }
+
+        // 댓글 삭제 (자식 이미지들은 CommentEntity에 cascade=ALL, orphanRemoval=true면 함께 삭제)
         commentRepository.delete(commentEntity);
     }
 }

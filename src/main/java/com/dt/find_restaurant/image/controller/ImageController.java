@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,7 +71,7 @@ public class ImageController {
                     )
             }
     )
-    @DeleteMapping
+    @PostMapping("/delete")
     public void deleteImage(@RequestParam("fileUrl") String fileUrl) {
         imageService.deleteImage(fileUrl);
     }

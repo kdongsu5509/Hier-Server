@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -97,9 +96,8 @@ public class CommentController {
                     )
             }
     )
-    @DeleteMapping("/{pinId}/comments/{commnetId}")
-    public void deleteComment(@NotNull @PathVariable UUID commnetId,
-                              @NotNull @PathVariable UUID pinId) {
-        commentService.deleteComment(commnetId, pinId);
+    @PostMapping("/{pinId}/comments/delete/{commnetId}")
+    public void deleteComment(@NotNull @PathVariable UUID pinId, @NotNull @PathVariable UUID commnetId) {
+        commentService.deleteComment(pinId, commnetId);
     }
 }

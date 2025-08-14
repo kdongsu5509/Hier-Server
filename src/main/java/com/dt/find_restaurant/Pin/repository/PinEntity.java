@@ -44,7 +44,7 @@ public class PinEntity extends BaseTimeEntity {
                 pinRequest.name(),
                 pinRequest.lat(),
                 pinRequest.lng(),
-                pinRequest.creatorName(),
+                pinRequest.nickname(),
                 pinRequest.pinKakaoMapUrl()
         );
     }

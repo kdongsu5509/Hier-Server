@@ -10,7 +10,7 @@ public record PinRequest(
         @NotNull
         Double lng,
         @NotNull
-        String creatorName,
+        String nickname,
         @NotNull
         String pinKakaoMapUrl
 ) {
