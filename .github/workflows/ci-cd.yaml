@@ -36,19 +36,6 @@ jobs:
         run: |
           touch src/main/resources/application-secret.yaml
           echo ${{secrets.SPRING_SECRET_YAML}} >> src/main/resources/application-secret.yaml
-            echo "Adding application-secret.yaml to resources"
-            if [ ! -d "src/main/resources" ]; then
-              mkdir -p src/main/resources
-            fi
-            if [ -f "src/main/resources/application-secret.yaml" ]; then
-              echo "application-secret.yaml already exists, skipping creation."
-            else
-              echo "Creating application-secret.yaml"
-              touch src/main/resources/application-secret.yaml
-            fi
-          echo "spring:" >> src/main/resources/application-secret.yaml
-          echo "  datasource:" >> src/main/resources/application-secret.yaml
-          echo "    url: jdbc:mysql://
 
       - name: Build with Gradle
         run: ./gradlew build -x test # 테스트 제외하고 빌드
