@@ -1,0 +1,109 @@
+# .github/workflows/ci-cd.yml
+
+name: Spring CI-CD with AWS
+
+# 1. 트리거 설정: main 브랜치에 push 이벤트가 발생했을 때 실행
+on:
+  push:
+    branches: [ "main" ]
+
+# 2. 환경 변수 설정: 워크플로우 전체에서 사용할 변수
+env:
+  AWS_REGION: ap-northeast-2 # 본인의 AWS 리전
+  ECR_REPOSITORY: samsung_dtcampus # 본인의 ECR 리포지토리 이름
+  CONTAINER_NAME: spring-app # EC2에서 실행될 컨테이너 이름
+
+jobs:
+  # -------------------- CI (빌드 및 ECR 푸시) --------------------
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: add application-secret.yaml to resources
+        run: |
+          touch src/main/resources/application-secret.yaml
+          echo ${{secrets.SPRING_SECRET_YAML}} >> src/main/resources/application-secret.yaml
+            echo "Adding application-secret.yaml to resources"
+            if [ ! -d "src/main/resources" ]; then
+              mkdir -p src/main/resources
+            fi
+            if [ -f "src/main/resources/application-secret.yaml" ]; then
+              echo "application-secret.yaml already exists, skipping creation."
+            else
+              echo "Creating application-secret.yaml"
+              touch src/main/resources/application-secret.yaml
+            fi
+          echo "spring:" >> src/main/resources/application-secret.yaml
+          echo "  datasource:" >> src/main/resources/application-secret.yaml
+          echo "    url: jdbc:mysql://
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test # 테스트 제외하고 빌드
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }} # Git commit 해시를 이미지 태그로 사용
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  # -------------------- CD (EC2 배포) --------------------
+  cd:
+    name: Continuous Deployment
+    needs: ci # ci 작업이 성공해야만 실행됨
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to EC2 instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # EC2 인스턴스 내에서 ECR에 로그인
+            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ needs.ci.outputs.image }}
+
+            # 최신 이미지 pull
+            docker pull ${{ needs.ci.outputs.image }}
+
+            # 기존 컨테이너 중지 및 삭제 (오류 무시)
+            docker stop ${{ env.CONTAINER_NAME }} || true
+            docker rm ${{ env.CONTAINER_NAME }} || true
+
+            # 새 컨테이너 실행
+            docker run -d -p 8080:8080 --name ${{ env.CONTAINER_NAME }} ${{ needs.ci.outputs.image }}
