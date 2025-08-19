@@ -36,6 +36,10 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public static User create(String email, String password, String role, String userName) {
+        return new User(email, password, role, userName, null);
+    }
+
     public static User create(String email, String password, String role, String userName, String profileImageUrl) {
         return new User(email, password, role, userName, profileImageUrl);
     }
