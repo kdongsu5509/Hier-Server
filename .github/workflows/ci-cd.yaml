@@ -88,7 +88,7 @@ jobs:
             --group-id ${{ secrets.EC2_SECURITY_GROUP_ID }} \
             --protocol tcp \
             --port 22 \
-            --cidr ${{ steps.ip.outputs.ip }}/0
+            --cidr ${{ steps.ip.outputs.ipv4 }}/0
 
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master #SSH를 통해 EC2에 배포
