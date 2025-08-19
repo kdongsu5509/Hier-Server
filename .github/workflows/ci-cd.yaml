@@ -101,7 +101,7 @@ jobs:
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ needs.ci.outputs.image }}
 
             # 최신 이미지 pull
-            docker pull ${{ needs.ci.outputs.image }}
+            docker pull ${{ secrets.IMAGE_NAME }}
 
             # 기존 컨테이너 중지 및 삭제 (오류 무시)
             docker stop ${{ env.CONTAINER_NAME }} || true
