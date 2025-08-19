@@ -15,7 +15,9 @@ public enum CustomExcpMsgs {
 //    RESTAURANT_INVALID_REQUEST("Invalid Restaurant request");
     ALEADY_EXISTS("이미 존재하는 데이터입니다."),
     PIN_NOT_FOUND("해당 핀 정보를 찾을 수 없습니다."),
-    COMMNET_NOT_FOUND("해당 댓글 정보를 찾을 수 없습니다.");
+    COMMNET_NOT_FOUND("해당 댓글 정보를 찾을 수 없습니다."),
+
+    USER_NOT_FOUND("해당 유저 정보를 찾을 수 없습니다.");
 
     private final String message;
 
