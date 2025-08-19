@@ -32,10 +32,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: add application-secret.yaml to resources
+      - name: Add application-secret.yaml
+        env:
+          SPRING_SECRET_YAML: ${{ secrets.SPRING_SECRET_YAML }}
         run: |
-          touch src/main/resources/application-secret.yaml
-          echo ${{secrets.SPRING_SECRET_YAML}} >> src/main/resources/application-secret.yaml
+          echo "$SPRING_SECRET_YAML" > src/main/resources/application-secret.yaml
 
       - name: Build with Gradle
         run: ./gradlew build -x test # 테스트 제외하고 빌드
