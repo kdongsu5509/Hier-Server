@@ -127,7 +127,7 @@ jobs:
             docker rm   '${{ env.CONTAINER_NAME }}' || true
 
             # Run new container
-            docker run -d -p 8080:8080 --name '${{ env.CONTAINER_NAME }}' "$IMAGE_URI"
+            docker run -d -p 80:8080 --name '${{ env.CONTAINER_NAME }}' "$IMAGE_URI"
 
       - name: Remove GitHub Action VM IP from EC2 security group
         if: always()
