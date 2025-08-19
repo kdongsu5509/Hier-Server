@@ -1,11 +1,15 @@
-# 1. 빌드 스테이지: JDK 환경에서 .jar 파일 생성
-FROM eclipse-temurin:21-jdk-jammy as builder
+FROM openjdk:21-jdk-slim as builder
 WORKDIR /app
-COPY . .
-RUN ./gradlew build -x test
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
+RUN chmod +x ./gradlew
+# --no-daemon 옵션을 추가하면 GitHub Actions 환경에서 빌드 속도가 더 안정적일 수 있습니다.
+RUN ./gradlew build --no-daemon -x test
 
-# 2. 실행 스테이지: JRE 환경에 .jar 파일만 복사
-FROM eclipse-temurin:21-jre-jammy
+FROM openjdk:21-jre-slim
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
