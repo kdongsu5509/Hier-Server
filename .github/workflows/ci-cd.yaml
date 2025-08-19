@@ -110,6 +110,7 @@ jobs:
             # 새 컨테이너 실행
             docker run -d -p 8080:8080 --name ${{ env.CONTAINER_NAME }} ${{ secrets.IMAGE_NAME }}
       - name: Remove GitHub Action VM IP from EC2 security group
+        if: always() # 항상 실행되도록 설정
         run: |
           aws ec2 revoke-security-group-ingress \
             --group-id ${{ secrets.EC2_SECURITY_GROUP_ID }} \
