@@ -1,9 +1,9 @@
-package com.dt.find_restaurant.Pin.controller;
+package com.dt.find_restaurant.pin.controller;
 
 
-import com.dt.find_restaurant.Pin.dto.PinRequest;
-import com.dt.find_restaurant.Pin.repository.PinEntity;
-import com.dt.find_restaurant.Pin.service.PinService;
+import com.dt.find_restaurant.pin.dto.PinRequest;
+import com.dt.find_restaurant.pin.repository.PinEntity;
+import com.dt.find_restaurant.pin.service.PinService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

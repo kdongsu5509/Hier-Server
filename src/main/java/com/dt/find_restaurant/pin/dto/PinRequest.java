@@ -1,4 +1,4 @@
-package com.dt.find_restaurant.Pin.dto;
+package com.dt.find_restaurant.pin.dto;
 
 import jakarta.validation.constraints.NotNull;
 

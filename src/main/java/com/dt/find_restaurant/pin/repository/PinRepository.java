@@ -1,4 +1,4 @@
-package com.dt.find_restaurant.Pin.repository;
+package com.dt.find_restaurant.pin.repository;
 
 import java.util.Optional;
 import java.util.UUID;

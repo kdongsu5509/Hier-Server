@@ -1,6 +1,20 @@
 spring:
   profiles:
     include: secret
+    active: local
   application:
     name: find_restaurant
 
+white-list:
+  paths:
+    - "/swagger-ui.html"            # Swagger UI 관련 HTML 페이지
+    - "/swagger-ui/**"              # Swagger UI 관련 정적 리소스
+    - "/v3/api-docs/**"             # Swagger UI 관련 API 문서
+    - "/swagger-resources/**"       # Swagger UI 관련 리소스
+    - "/webjars/**"                 # Swagger UI 관련 웹 자원
+    - "/api/auth/reissue"           #토큰 재발급
+    - "/api/signup"               #회원가입
+    - "/api/signup/**"             #회원가입
+    - "/api/login"                  #로그인
+    - "/actuator/**"                # kubernetes 헬스 체크
+    - "/image/**"                   # 이미지 업로드
