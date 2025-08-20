@@ -1,6 +1,6 @@
 package com.dt.find_restaurant.comment.repository;
 
-import com.dt.find_restaurant.Pin.repository.PinEntity;
+import com.dt.find_restaurant.pin.repository.PinEntity;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

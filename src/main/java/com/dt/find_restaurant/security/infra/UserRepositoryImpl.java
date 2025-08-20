@@ -2,9 +2,10 @@ package com.dt.find_restaurant.security.infra;
 
 import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.USER_NOT_FOUND;
 
-import com.dt.find_restaurant.global.exception.CustomeExceptions.UserException;
+import com.dt.find_restaurant.global.exception.CustomExceptions.UserException;
 import com.dt.find_restaurant.security.domain.User;
 import com.dt.find_restaurant.security.domain.UserRepository;
+import java.util.Collection;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -47,5 +48,10 @@ public class UserRepositoryImpl implements UserRepository {
             throw new UserException(USER_NOT_FOUND.getMessage() + user.getUuid());
         }
         UserJpaRepository.save(user);
+    }
+
+    @Override
+    public Collection<User> findAll() {
+        return UserJpaRepository.findAll();
     }
 }

@@ -2,8 +2,8 @@ package com.dt.find_restaurant.comment.repository;
 
 import static jakarta.persistence.FetchType.LAZY;
 
-import com.dt.find_restaurant.Pin.repository.PinEntity;
 import com.dt.find_restaurant.global.util.BaseTimeEntity;
+import com.dt.find_restaurant.pin.repository.PinEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

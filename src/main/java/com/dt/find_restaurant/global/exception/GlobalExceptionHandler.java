@@ -1,5 +1,6 @@
 package com.dt.find_restaurant.global.exception;
 
+import com.dt.find_restaurant.global.exception.CustomExceptions.JwtException;
 import com.dt.find_restaurant.global.response.APIResponse;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,13 @@ public class GlobalExceptionHandler {
     public APIResponse<Object> handleTooManyRequests(TooManyRequestsException e) {
         log.warn("TooManyRequestsException 발생: {}", e.getMessage());
         return APIResponse.fail(HttpStatus.TOO_MANY_REQUESTS.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(JwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public APIResponse<Object> handleJwtException(JwtException e) {
+        log.error("Jwt Exception 발생: ", e);
+        return APIResponse.fail(HttpStatus.UNAUTHORIZED.value(), "Jwt가 없거나 만료되었습니다");
     }
 
     @ExceptionHandler(Exception.class)

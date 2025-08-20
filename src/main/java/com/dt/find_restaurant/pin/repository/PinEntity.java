@@ -1,9 +1,9 @@
-package com.dt.find_restaurant.Pin.repository;
+package com.dt.find_restaurant.pin.repository;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import com.dt.find_restaurant.Pin.dto.PinRequest;
 import com.dt.find_restaurant.global.util.BaseTimeEntity;
+import com.dt.find_restaurant.pin.dto.PinRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

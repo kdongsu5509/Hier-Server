@@ -1,14 +1,14 @@
-package com.dt.find_restaurant.Pin.service;
+package com.dt.find_restaurant.pin.service;
 
 import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.PIN_NOT_FOUND;
 
-import com.dt.find_restaurant.Pin.dto.PinRequest;
-import com.dt.find_restaurant.Pin.repository.PinEntity;
-import com.dt.find_restaurant.Pin.repository.PinRepository;
 import com.dt.find_restaurant.comment.repository.CommentEntity;
 import com.dt.find_restaurant.comment.repository.CommentRepository;
+import com.dt.find_restaurant.global.exception.CustomExceptions.PinException;
 import com.dt.find_restaurant.global.exception.CustomExcpMsgs;
-import com.dt.find_restaurant.global.exception.CustomeExceptions.PinException;
+import com.dt.find_restaurant.pin.dto.PinRequest;
+import com.dt.find_restaurant.pin.repository.PinEntity;
+import com.dt.find_restaurant.pin.repository.PinRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,7 +51,7 @@ public class PinService {
     private void notAllowAlreadyExistInfomation(PinRequest req) {
         Optional<PinEntity> byLat = pinRepository.findByLat(req.lat());
         if (byLat.isPresent() && byLat.get().getLat().equals(req.lat())) {
-            throw new PinException(CustomExcpMsgs.ALEADY_EXISTS.getMessage());
+            throw new PinException(CustomExcpMsgs.ALREADY_EXISTS.getMessage());
         }
     }
 

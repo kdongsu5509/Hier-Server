@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.dt.find_restaurant.global.exception.CustomeExceptions.UserException;
+import com.dt.find_restaurant.global.exception.CustomExceptions.UserException;
 import com.dt.find_restaurant.security.domain.User;
 import java.util.Optional;
 import java.util.UUID;

@@ -30,14 +30,13 @@ class UserServiceTest {
 
     @Test
     @DisplayName("join: 회원가입 요청 시, 비밀번호를 암호화하여 저장한다")
-    void join_with_valid_dto_should_save_encoded_user() {
+    void signUp_with_valid_dto_should_save_encoded_user() {
         // given
         UserDto requestDto = new UserDto(
                 "test@example.com",
                 "password123",
                 "tester",
-                null,
-                "NORMAL"
+                null
         );
         String rawPassword = requestDto.password();
         String encodedPassword = "encodedPassword123";
@@ -46,7 +45,7 @@ class UserServiceTest {
         given(passwordEncoder.encode(rawPassword)).willReturn(encodedPassword);
 
         // when
-        userService.join(requestDto);
+        userService.signUp(requestDto);
 
         // then
         // userRepository.save() 메소드로 전달된 User 객체를 캡처
@@ -56,7 +55,7 @@ class UserServiceTest {
         // 캡처된 User 객체의 필드 검증
         User savedUser = userCaptor.getValue();
         assertThat(savedUser.getEmail()).isEqualTo(requestDto.email());
-        assertThat(savedUser.getUserName()).isEqualTo(requestDto.userName());
+        assertThat(savedUser.getUserName()).isEqualTo(requestDto.username());
         assertThat(savedUser.getPassword()).isEqualTo(encodedPassword); // 비밀번호가 암호화되었는지 확인
         assertThat(savedUser.getPassword()).isNotEqualTo(rawPassword);   // 원본 비밀번호와 다른지 확인
     }

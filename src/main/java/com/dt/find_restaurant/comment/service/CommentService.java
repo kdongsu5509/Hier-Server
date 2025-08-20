@@ -1,15 +1,15 @@
 package com.dt.find_restaurant.comment.service;
 
-import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.COMMNET_NOT_FOUND;
+import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.COMMENT_NOT_FOUND;
 import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.PIN_NOT_FOUND;
 
-import com.dt.find_restaurant.Pin.repository.PinEntity;
-import com.dt.find_restaurant.Pin.repository.PinRepository;
 import com.dt.find_restaurant.comment.dto.CommentRequest;
 import com.dt.find_restaurant.comment.repository.CommentEntity;
 import com.dt.find_restaurant.comment.repository.CommentImageEntity;
 import com.dt.find_restaurant.comment.repository.CommentRepository;
-import com.dt.find_restaurant.global.exception.CustomeExceptions.CommentException;
+import com.dt.find_restaurant.global.exception.CustomExceptions.CommentException;
+import com.dt.find_restaurant.pin.repository.PinEntity;
+import com.dt.find_restaurant.pin.repository.PinRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -63,7 +63,7 @@ public class CommentService {
 
     public void deleteComment(UUID pinId, UUID commentId) {
         CommentEntity commentEntity = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(COMMNET_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND.getMessage()));
 
         PinEntity pin = commentEntity.getPin();
         if (pin == null || pin.getId() == null) {

@@ -1,11 +1,14 @@
 package com.dt.find_restaurant.security.global.config;
 
+import com.dt.find_restaurant.global.filter.LoggingFilter;
+import com.dt.find_restaurant.security.application.JwtService;
+import com.dt.find_restaurant.security.global.filter.JwtFilter;
+import com.dt.find_restaurant.security.global.filter.LoginFilter;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,8 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
-    //    private final JwtService jwtService;
-//    private final JwtProperties jwtProperties;
+    private final JwtService jwtService;
     private final WhiteListProperties whiteListProperties;
 
     @Bean
@@ -35,33 +38,27 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/login", "/reissue", "/user/signup/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasRole("USER")
-                        .requestMatchers(
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**"
-                        ).permitAll()
-                        .requestMatchers("/", "/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(whiteListProperties.getPaths().toArray(new String[0])).permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/user/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout.logoutSuccessUrl("/logout"));
-//        addCustomFilters(http);
+        addCustomFilters(http);
 
         return http.build();
     }
 
-//    private void addCustomFilters(HttpSecurity http) throws Exception {
-//        http.addFilterBefore(new JwtFilter(jwtService, whiteListProperties), LoginFilter.class);
-//        http.addFilterAt(new LoginFilter(
-//                        authenticationManager(authenticationConfiguration), jwtService, jwtProperties),
-//                UsernamePasswordAuthenticationFilter.class
-//        );
-//    }
+    private void addCustomFilters(HttpSecurity http) throws Exception {
+        AuthenticationManager authenticationManager = authenticationManager(authenticationConfiguration);
+
+        http.addFilterBefore(new LoggingFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterAt(new LoginFilter(authenticationManager, jwtService),
+                UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(new JwtFilter(jwtService), LoginFilter.class);
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

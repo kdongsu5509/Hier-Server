@@ -1,8 +1,13 @@
 package com.dt.find_restaurant.security.presentation;
 
+import com.dt.find_restaurant.global.response.APIResponse;
 import com.dt.find_restaurant.security.application.UserService;
 import com.dt.find_restaurant.security.presentation.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 )
 @Slf4j
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/signup")
 @RequiredArgsConstructor
-public class UserController {
+public class SignUpController {
 
     private final UserService userService;
 
@@ -49,7 +54,20 @@ public class UserController {
             }
     )
     @PostMapping
-    public void join(@Validated @RequestBody UserDto req) {
-        userService.join(req);
+    public void signUp(@Validated @RequestBody UserDto req) {
+        userService.signUp(req);
+    }
+
+    @Operation(summary = "관리자 회원 가입", description = "관리자가 새로운 관리자를 등록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "관리자 회원 가입 성공",
+                    content = @Content(schema = @Schema(implementation = APIResponse.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청",
+                    content = @Content(schema = @Schema(implementation = APIResponse.class)))
+    })
+    @PostMapping("/admin")
+    public APIResponse<Void> singUpAsAdmin(@Validated @RequestBody UserDto req) {
+        userService.signUpAsAdmin(req);
+        return APIResponse.success();
     }
 }
