@@ -1,12 +1,13 @@
 package com.dt.find_restaurant.comment.repository;
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 
 import com.dt.find_restaurant.global.util.BaseTimeEntity;
 import com.dt.find_restaurant.pin.domain.Pin;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,30 +32,30 @@ public class CommentEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
-    private String creatorName;
-
     @Lob
     private String comment;
 
     private Double grade;
 
+    @Enumerated(STRING)
+    private CommentType type;
+
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
     private List<CommentImageEntity> images = new ArrayList<>();
 
-    @JsonIgnore
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "pin_id")
     private Pin pin;
 
-    private CommentEntity(String creatorName, String comment, Double grade, Pin pin) {
-        this.creatorName = creatorName;
+    private CommentEntity(String comment, Double grade, Pin pin, CommentType commentType) {
         this.comment = comment;
         this.grade = grade;
-        this.pin = pin; // 연관관계 설정
+        this.pin = pin;
+        this.type = commentType;
     }
 
-    public static CommentEntity create(String creatorName, String comment, Double grade, Pin pin) {
-        return new CommentEntity(creatorName, comment, grade, pin);
+    public static CommentEntity create(String comment, Double grade, Pin pin, CommentType commentType) {
+        return new CommentEntity(comment, grade, pin, commentType);
     }
 
     public void addCommentImage(CommentImageEntity commentImageEntity) {

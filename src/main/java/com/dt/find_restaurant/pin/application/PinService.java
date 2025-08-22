@@ -2,6 +2,7 @@ package com.dt.find_restaurant.pin.application;
 
 import com.dt.find_restaurant.global.exception.CustomExceptions.PinException;
 import com.dt.find_restaurant.global.exception.CustomExcpMsgs;
+import com.dt.find_restaurant.pin.domain.Category;
 import com.dt.find_restaurant.pin.domain.Pin;
 import com.dt.find_restaurant.pin.domain.PinRepository;
 import com.dt.find_restaurant.pin.dto.PinDetailResponse;
@@ -26,8 +27,11 @@ public class PinService {
 
     public UUID createPin(String userEmail, PinRequest req) {
         notAllowAlreadyExistInfomation(req);
+
         Pin newPin = req.toPin();
 
+        Category categoryObj = Category.create(req.category());
+        newPin.updateCategory(categoryObj);
         newPin.updateUser(userRepository.findByEmail(userEmail));
 
         return pinRepository.saveAndReturnId(newPin);
@@ -88,11 +92,12 @@ public class PinService {
     private PinSimpleResponse toPinSimpleResponse(Pin pin) {
         return new PinSimpleResponse(
                 pin.getId(),
-                pin.getRestaurantName(),
+                pin.getPlaceName(),
                 pin.getKakaoMapUrl(),
                 pin.getGrade(),
                 pin.getLikeCount(),
                 pin.getAddress(),
+                pin.getCategory().getName(),
                 pin.getUser().getUserName(),
                 pin.getCreatedAt(),
                 pin.getUpdatedAt()
@@ -101,11 +106,12 @@ public class PinService {
 
     private PinDetailResponse toPinDetailResponse(Pin pin) {
         return new PinDetailResponse(
-                pin.getRestaurantName(),
+                pin.getPlaceName(),
                 pin.getText(),
                 pin.getKakaoMapUrl(),
                 pin.getGrade(),
                 pin.getLikeCount(),
+                pin.getCategory().getName(),
                 pin.getAddress(),
                 pin.getUser().getUserName(),
                 pin.getCreatedAt(),

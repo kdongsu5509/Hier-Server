@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,7 @@ public class Pin extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
-    String restaurantName;
+    String placeName;
 
     @Lob
     String text;
@@ -44,9 +45,13 @@ public class Pin extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     User user;
 
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "category_id")
+    Category category;
 
-    private Pin(String restaurantName, String text, String kakaoMapUrl, Double grade, Address address, Long likeCount) {
-        this.restaurantName = restaurantName;
+
+    private Pin(String placeName, String text, String kakaoMapUrl, Double grade, Address address, Long likeCount) {
+        this.placeName = placeName;
         this.text = text;
         this.kakaoMapUrl = kakaoMapUrl;
         this.grade = grade;
@@ -62,13 +67,17 @@ public class Pin extends BaseTimeEntity {
         this.user = user;
     }
 
+    public void updateCategory(Category category) {
+        this.category = category;
+    }
+
     public void updatePinByUser(PinUpdateRequest req) {
         //First. Update Adress Cause this is embedded object
         updateAddressToNewAddressObject(req);
 
         //Second. Update Others
         if (req.restaurantName() != null) {
-            this.restaurantName = req.restaurantName();
+            this.placeName = req.restaurantName();
         }
         if (req.text() != null) {
             this.text = req.text();

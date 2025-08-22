@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.dt.find_restaurant.pin.domain.Category;
 import com.dt.find_restaurant.pin.domain.Pin;
 import com.dt.find_restaurant.pin.domain.PinRepository;
 import com.dt.find_restaurant.pin.dto.PinDetailResponse;
@@ -64,7 +65,8 @@ class PinServiceTest {
                 "http://kakao.com/image.png",
                 35.123456,
                 128.123456,
-                "경상남도 거제시 아주동"
+                "경상남도 거제시 아주동",
+                "식당"
         );
         UUID pinUuid = UUID.randomUUID();
 
@@ -83,6 +85,7 @@ class PinServiceTest {
     @DisplayName("여러 개의 핀의 정보 잘 가져옴")
     void getAllPins() {
         //given
+        Category restaurant = Category.create("식당");
         Pin pin1 = Pin.createNewPin(
                 "거제 맛집 1",
                 "맛있음 1",
@@ -95,6 +98,8 @@ class PinServiceTest {
                 "http://kakao.com/image2.png",
                 new com.dt.find_restaurant.pin.domain.Address(35.654321, 128.654321, "경상남도 거제시 아주동")
         );
+        pin1.updateCategory(restaurant);
+        pin2.updateCategory(restaurant);
         User user1 = User.create(
                 "test1@test.com",
                 "password123",
@@ -134,12 +139,14 @@ class PinServiceTest {
     @DisplayName("핀 ID로 핀 정보 조회")
     void getPinById() {
         //given
+        Category restaurant = Category.create("식당");
         Pin pin1 = Pin.createNewPin(
                 "거제 맛집 1",
                 "맛있음 1",
                 "http://kakao.com/image1.png",
                 new com.dt.find_restaurant.pin.domain.Address(35.123456, 128.123456, "경상남도 거제시 아주동")
         );
+        pin1.updateCategory(restaurant);
         pin1.updateUser(testUser);
         ReflectionTestUtils.setField(pin1, "id", UUID.randomUUID());
 
