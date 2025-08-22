@@ -49,7 +49,11 @@ public class PinController {
             value = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "핀 생성 성공"
+                            description = "핀 생성 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = UUID.class)
+                            )
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "400",
@@ -73,7 +77,11 @@ public class PinController {
             value = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "모든 핀 조회 성공"
+                            description = "모든 핀 조회 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PinSimpleResponse.class)
+                            )
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "400",
@@ -94,7 +102,11 @@ public class PinController {
             value = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "핀 조회 성공"
+                            description = "핀 조회 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PinDetailResponse.class)
+                            )
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "400",
@@ -124,7 +136,11 @@ public class PinController {
             value = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "핀 수정 성공"
+                            description = "핀 수정 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Void.class)
+                            )
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "400",
@@ -150,7 +166,11 @@ public class PinController {
             value = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "핀 삭제 성공"
+                            description = "핀 삭제 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Void.class)
+                            )
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "400",
@@ -159,8 +179,9 @@ public class PinController {
             }
     )
     @PostMapping("/delete")
-    public void deletePin(@RequestBody UUID pinId, @AuthenticationPrincipal String userEmail) {
+    public APIResponse<Void> deletePin(@RequestBody UUID pinId, @AuthenticationPrincipal String userEmail) {
         pinService.deletePin(userEmail, pinId);
+        return APIResponse.success();
     }
 
 
