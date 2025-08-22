@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
                 version = "v1.0.0"
         )
 )
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.dt.find_restaurant")
 @ConfigurationPropertiesScan
 public class FindRestaurantApplication {
 

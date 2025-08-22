@@ -45,7 +45,7 @@ class UserRepositoryImplTest {
                 "http://example.com/profile.jpg"
         );
         // 테스트의 일관성을 위해 ReflectionTestUtils로 UUID를 주입
-        ReflectionTestUtils.setField(testUser, "uuid", testUuid);
+        ReflectionTestUtils.setField(testUser, "id", testUuid);
     }
 
     @Test

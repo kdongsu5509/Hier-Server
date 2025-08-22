@@ -3,7 +3,7 @@ package com.dt.find_restaurant.comment.repository;
 import static jakarta.persistence.FetchType.LAZY;
 
 import com.dt.find_restaurant.global.util.BaseTimeEntity;
-import com.dt.find_restaurant.pin.repository.PinEntity;
+import com.dt.find_restaurant.pin.domain.Pin;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -44,17 +44,17 @@ public class CommentEntity extends BaseTimeEntity {
     @JsonIgnore
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "pin_id")
-    private PinEntity pin;
+    private Pin pin;
 
-    private CommentEntity(String creatorName, String comment, Double grade, PinEntity pinEntity) {
+    private CommentEntity(String creatorName, String comment, Double grade, Pin pin) {
         this.creatorName = creatorName;
         this.comment = comment;
         this.grade = grade;
-        this.pin = pinEntity; // 연관관계 설정
+        this.pin = pin; // 연관관계 설정
     }
 
-    public static CommentEntity create(String creatorName, String comment, Double grade, PinEntity pinEntity) {
-        return new CommentEntity(creatorName, comment, grade, pinEntity);
+    public static CommentEntity create(String creatorName, String comment, Double grade, Pin pin) {
+        return new CommentEntity(creatorName, comment, grade, pin);
     }
 
     public void addCommentImage(CommentImageEntity commentImageEntity) {

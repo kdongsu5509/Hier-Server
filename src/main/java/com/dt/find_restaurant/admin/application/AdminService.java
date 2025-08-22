@@ -20,7 +20,7 @@ public class AdminService {
         log.info("관리자 서비스 - 모든 사용자 정보 조회 요청");
         return userRepository.findAll().stream()
                 .map(user -> new UserInfoResponseDto(
-                        user.getUuid(),
+                        user.getId(),
                         user.getEmail(),
                         user.getUserName(),
                         user.getProfileImageUrl(),

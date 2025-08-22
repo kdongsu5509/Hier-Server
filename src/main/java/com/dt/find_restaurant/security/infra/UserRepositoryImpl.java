@@ -19,7 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public UUID save(User user) {
-        return UserJpaRepository.save(user).getUuid();
+        return UserJpaRepository.save(user).getId();
     }
 
     @Override
@@ -44,8 +44,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void update(User user) {
-        if (!UserJpaRepository.existsById(user.getUuid())) {
-            throw new UserException(USER_NOT_FOUND.getMessage() + user.getUuid());
+        if (!UserJpaRepository.existsById(user.getId())) {
+            throw new UserException(USER_NOT_FOUND.getMessage() + user.getId());
         }
         UserJpaRepository.save(user);
     }
