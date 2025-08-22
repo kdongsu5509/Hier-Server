@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum CustomExcpMsgs {
     ALREADY_EXISTS("이미 존재하는 데이터입니다."),
     PIN_NOT_FOUND("해당 핀 정보를 찾을 수 없습니다."),
+    PIN_UNAUTHORIZED("해당 핀에 대한 권한이 없습니다."),
     COMMENT_NOT_FOUND("해당 댓글 정보를 찾을 수 없습니다."),
 
     USER_NOT_FOUND("해당 유저 정보를 찾을 수 없습니다."),

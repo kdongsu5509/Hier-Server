@@ -1,21 +1,24 @@
-package com.dt.find_restaurant.pin.controller;
+package com.dt.find_restaurant.pin.presentation;
 
-
+import com.dt.find_restaurant.global.response.APIResponse;
+import com.dt.find_restaurant.pin.application.PinService;
+import com.dt.find_restaurant.pin.dto.PinDetailResponse;
 import com.dt.find_restaurant.pin.dto.PinRequest;
-import com.dt.find_restaurant.pin.repository.PinEntity;
-import com.dt.find_restaurant.pin.service.PinService;
+import com.dt.find_restaurant.pin.dto.PinSimpleResponse;
+import com.dt.find_restaurant.pin.dto.PinUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(
@@ -29,6 +32,7 @@ public class PinController {
 
     private final PinService pinService;
 
+    //CREATE
     @Operation(
             summary = "핀 생성",
             description = "새로운 핀을 생성합니다. 요청 본문에 핀 정보를 포함해야 합니다."
@@ -54,31 +58,13 @@ public class PinController {
             }
     )
     @PostMapping
-    public PinEntity createPin(@RequestBody @Validated PinRequest pinRequest) {
-        return pinService.createPin(pinRequest);
+    public APIResponse<UUID> createPin(@RequestBody @Validated PinRequest pinRequest,
+                                       @AuthenticationPrincipal String userEmail) {
+        UUID pinId = pinService.createPin(userEmail, pinRequest);
+        return APIResponse.success(pinId);
     }
 
-    @Operation(
-            summary = "핀 삭제",
-            description = "핀을 삭제합니다. 요청 파라미터에 핀 ID를 포함해야 합니다."
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponses(
-            value = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "핀 삭제 성공"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "400",
-                            description = "잘못된 요청"
-                    )
-            }
-    )
-    @PostMapping("/delete")
-    public void deletePin(@RequestParam UUID pinId) {
-        pinService.deletePin(pinId);
-    }
-
+    //READ
     @Operation(
             summary = "모든 핀 조회",
             description = "저장된 모든 핀을 조회합니다."
@@ -95,9 +81,9 @@ public class PinController {
                     )
             }
     )
-    @GetMapping()
-    public List<PinEntity> getAllPins() {
-        return pinService.getAllPins();
+    @GetMapping
+    public APIResponse<List<PinSimpleResponse>> getAllPins() {
+        return APIResponse.success(pinService.getAllPins());
     }
 
     @Operation(
@@ -117,7 +103,65 @@ public class PinController {
             }
     )
     @GetMapping("{pinId}")
-    public PinEntity getPinById(@PathVariable UUID pinId) {
-        return pinService.getPinById(pinId);
+    public APIResponse<PinDetailResponse> getPinById(@PathVariable UUID pinId) {
+        return APIResponse.success(pinService.getPinById(pinId));
     }
+
+    //UPDATE
+    @Operation(
+            summary = "핀 수정",
+            description = "기존 핀 정보를 수정합니다. 요청 파라미터에 핀 ID를 포함하고, 요청 본문에 수정할 핀 정보를 포함해야 합니다."
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "핀 수정 요청 본문",
+            required = true,
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                    mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PinUpdateRequest.class)
+            )
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses(
+            value = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "핀 수정 성공"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "잘못된 요청"
+                    )
+            }
+    )
+    @PatchMapping("{pinId}")
+    public APIResponse<Void> updatePin(
+            @AuthenticationPrincipal String userEmail,
+            @PathVariable UUID pinId,
+            @RequestBody PinUpdateRequest req) {
+        pinService.updatePin(userEmail, pinId, req);
+        return APIResponse.success();
+    }
+
+    //DELETE
+    @Operation(
+            summary = "핀 삭제",
+            description = "핀을 삭제합니다. 요청 파라미터에 핀 ID를 포함해야 합니다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses(
+            value = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "핀 삭제 성공"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "잘못된 요청"
+                    )
+            }
+    )
+    @PostMapping("/delete")
+    public void deletePin(@RequestBody UUID pinId, @AuthenticationPrincipal String userEmail) {
+        pinService.deletePin(userEmail, pinId);
+    }
+
+
 }

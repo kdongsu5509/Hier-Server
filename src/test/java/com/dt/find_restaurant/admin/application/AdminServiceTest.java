@@ -51,7 +51,7 @@ class AdminServiceTest {
         for (int i = 0; i < mockUsers.size(); i++) {
             UserInfoResponseDto userInfo = resultsUsers.get(i);
             User mockUser = mockUsers.get(i);
-            assertThat(userInfo.uuid()).isEqualTo(mockUser.getUuid());
+            assertThat(userInfo.uuid()).isEqualTo(mockUser.getId());
             assertThat(userInfo.email()).isEqualTo(mockUser.getEmail());
             assertThat(userInfo.username()).isEqualTo(mockUser.getUserName());
             assertThat(userInfo.profileImageUrl()).isEqualTo(mockUser.getProfileImageUrl());
