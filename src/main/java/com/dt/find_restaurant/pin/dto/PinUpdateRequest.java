@@ -9,6 +9,8 @@ public record PinUpdateRequest(
         @Nullable @Min(value = 30, message = "최소 30자 이상 입력해주세요.")
         String text,
         @Nullable
+        String category,
+        @Nullable
         String kakaoMapUrl,
         @Nullable
         Double latitude,

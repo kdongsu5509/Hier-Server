@@ -10,6 +10,7 @@ public record PinDetailResponse(
         String kakaoMapUrl,
         Double grade,
         Long likeCount,
+        String category,
         Address address,
         String createdBy,
         LocalDateTime createdAt,

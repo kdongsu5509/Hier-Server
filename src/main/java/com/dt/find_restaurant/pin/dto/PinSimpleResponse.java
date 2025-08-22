@@ -14,6 +14,7 @@ public record PinSimpleResponse(
         Double grade,
         Long likeCount,
         Address address,
+        String category,
         String createdBy,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

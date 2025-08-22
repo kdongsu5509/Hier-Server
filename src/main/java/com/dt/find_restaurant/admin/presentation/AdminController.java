@@ -40,4 +40,6 @@ public class AdminController {
         List<UserInfoResponseDto> allUsers = adminService.findAllUsers();
         return APIResponse.success(allUsers);
     }
+
+    //핀의 생성은 관리자만 가능합니다!
 }

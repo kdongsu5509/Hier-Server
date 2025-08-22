@@ -17,7 +17,9 @@ public record PinRequest(
         @NotNull
         Double longitude,
         @NotNull
-        String koreanAddress
+        String koreanAddress,
+        @NotNull
+        String category
 ) {
     public Pin toPin() {
         Address newPinAddress = new Address(
