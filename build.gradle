@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'org.springframework.boot' version '3.5.4'
     id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -83,6 +84,37 @@ dependencies {
     implementation 'com.nimbusds:nimbus-jose-jwt:9.37'
 }
 
+jacoco {
+    toolVersion = "0.8.12"
+}
+jacocoTestReport {
+    // 이 작업은 'test' 작업이 실행된 후에 실행되어야 함
+    dependsOn test
+
+    reports {
+        // 원하는 리포트 포맷을 지정 (html, xml, csv)
+        // 보통 html 리포트를 많이 사용
+        html.required = true
+        xml.required = false
+        csv.required = false
+    }
+
+    // 4. (중요) 커버리지 측정에서 제외할 클래스 설정
+    // QueryDSL, Lombok 등 자동으로 생성되는 코드는 테스트 커버리지 측정에서 제외해야 정확해요.
+//    def queryDslSrc = "build/generated/sources/annotationProcessor/java/main"
+
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, excludes: [
+                "**/*Application*", // Spring Boot Main 클래스
+                "**/config/**",      // Config 클래스
+                "**/dto/**",         // DTO 클래스
+                "**/Q*",             // QueryDSL QClass
+                "**/*Request*",
+                "**/*Response*"
+        ])
+    }))
+}
+
 dependencyManagement {
     imports {
         mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
@@ -91,4 +123,41 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
+
+//TODO : 차후 커버리지 80% 이상으로 설정 후 테스트 코드 작성 예정
+//jacocoTestCoverageVerification {
+//    dependsOn jacocoTestReport
+//
+//    violationRules {
+//        rule {
+//            enabled = true // 규칙 활성화
+//            element = 'CLASS' // 검증 단위를 클래스 단위로
+//
+//            // 라인 커버리지가 80% 이상이어야 함
+//            limit {
+//                counter = 'LINE'
+//                value = 'COVEREDRATIO'
+//                minimum = 0.80
+//            }
+//
+//            // 브랜치 커버리지가 80% 이상이어야 함
+//            limit {
+//                counter = 'BRANCH'
+//                value = 'COVEREDRATIO'
+//                minimum = 0.80
+//            }
+//
+//            // 제외할 클래스 설정 (리포트 설정과 동일하게)
+//            excludes = [
+//                    "*.*Application",
+//                    "*.config.*",
+//                    "*.dto.*"
+//            ]
+//        }
+//    }
+//}
+//
+//// 'check' 작업 실행 시 커버리지 검증도 함께 실행
+//check.dependsOn jacocoTestCoverageVerification
