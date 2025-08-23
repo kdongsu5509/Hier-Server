@@ -71,4 +71,16 @@ public class Comment extends BaseTimeEntity {
     public void updateUser(User user) {
         this.user = user;
     }
+
+    public void updateComment(String comment, Double grade, CommentType type) {
+        if(comment != null) {
+            this.comment = comment;
+        }
+        if(grade != null) {
+            this.grade = grade;
+        }
+        if(type != null) {
+            this.type = type;
+        }
+    }
 }

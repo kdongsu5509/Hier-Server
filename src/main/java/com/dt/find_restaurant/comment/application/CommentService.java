@@ -1,6 +1,7 @@
 package com.dt.find_restaurant.comment.application;
 
 import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.COMMENT_NOT_FOUND;
+import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.COMMENT_UNAUTHORIZED;
 import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.PIN_NOT_FOUND;
 
 import com.dt.find_restaurant.comment.domain.Comment;
@@ -8,11 +9,13 @@ import com.dt.find_restaurant.comment.domain.CommentImageEntity;
 import com.dt.find_restaurant.comment.domain.CommentRepository;
 import com.dt.find_restaurant.comment.dto.CommentRequest;
 import com.dt.find_restaurant.comment.dto.CommentResponse;
+import com.dt.find_restaurant.comment.dto.CommentUpdateRequest;
 import com.dt.find_restaurant.global.exception.CustomExceptions.CommentException;
 import com.dt.find_restaurant.pin.domain.Pin;
 import com.dt.find_restaurant.pin.domain.PinRepository;
 import com.dt.find_restaurant.security.domain.User;
 import com.dt.find_restaurant.security.domain.UserRepository;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,28 +44,50 @@ public class CommentService {
         return commentRepository.saveAndReturnId(commentEntity);
     }
 
-    public List<CommentResponse> getAllCommentOfPost(UUID pinId) {
+    public List<CommentResponse> getAllCommentOfPin(UUID pinId) {
         List<Comment> byPinId = commentRepository.findByPinId(pinId);
         return byPinId.stream()
                 .map(this::toCommentResponse)
                 .toList();
     }
 
-    private CommentResponse toCommentResponse(Comment comment) {
-        return new CommentResponse(
-                comment.getComment(),
-                comment.getGrade(),
-                comment.getType(),
-                comment.getUser().getUserName(),
-                comment.getCreatedAt(),
-                comment.getUpdatedAt()
-        );
+    public void updateComment(String userEmail, @NotNull UUID pinId, @NotNull UUID commentId, CommentUpdateRequest updateRequest) {
+        //1. 내가 이 댓글을 쓴게 맞는지 확인
+        Comment commentEntity = validateCommentUpdateRequest(userEmail, pinId, commentId);
+        //4. 댓글 수정
+        commentEntity.updateComment(updateRequest.comment(), updateRequest.grade(), updateRequest.commentType());
     }
 
-    public void deleteComment(UUID pinId, UUID commentId) {
+    public void updateCommentImages(String userEmail, @NotNull UUID pinId, @NotNull UUID commentId, List<String> imageUrls) {
+        Comment commentEntity = validateCommentUpdateRequest(userEmail, pinId, commentId);
+        //4. 이미지 수정
+        imageUrls.stream()
+                .map(CommentImageEntity::create)
+                .forEach(commentEntity::updateImage);
+    }
+
+    private Comment validateCommentUpdateRequest(String userEmail, UUID pinId, UUID commentId) {
+        //1. 내가 이 댓글을 쓴게 맞는지 확인
+        isMyComment(userEmail);
+
+        //2. commentId로 댓글 조회
         Comment commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND.getMessage()));
 
+        //3. 댓글이 pinId와 연관된게 맞는지 확인
+        haveProperRelationWithPin(pinId, commentEntity);
+        return commentEntity;
+    }
+
+    public void deleteComment(String userEmail, UUID pinId, UUID commentId) {
+        //1. 내 댓글이 맞는지 확인
+        Comment commentEntity = validateCommentUpdateRequest(userEmail, pinId, commentId);
+
+        // 댓글 삭제 (자식 이미지들은 CommentEntity에 cascade=ALL, orphanRemoval=true면 함께 삭제)
+        commentRepository.delete(commentEntity);
+    }
+
+    private static void haveProperRelationWithPin(UUID pinId, Comment commentEntity) {
         Pin pin = commentEntity.getPin();
         if (pin == null || pin.getId() == null) {
             log.info("핀 조회에 실패했습니다 (pin 또는 pin.id == null)");
@@ -75,9 +100,25 @@ public class CommentService {
             log.info("여기서 핀 조회에 실패했습니다");
             throw new CommentException(PIN_NOT_FOUND.getMessage());
         }
+    }
 
-        // 댓글 삭제 (자식 이미지들은 CommentEntity에 cascade=ALL, orphanRemoval=true면 함께 삭제)
-        commentRepository.delete(commentEntity);
+    private void isMyComment(String userEmail) {
+        String findUser = commentRepository.findByUserEmail(userEmail);
+        if(findUser == null || !findUser.equals(userEmail)) {
+            log.info("해당 댓글의 작성자가 아닙니다. userEmail: {}, findUser: {}", userEmail, findUser);
+            throw new CommentException(COMMENT_UNAUTHORIZED.getMessage());
+        }
+    }
+
+    private CommentResponse toCommentResponse(Comment comment) {
+        return new CommentResponse(
+                comment.getComment(),
+                comment.getGrade(),
+                comment.getType(),
+                comment.getUser().getUserName(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
+        );
     }
 
     private void addImageIfExist(CommentRequest req, Comment commentEntity) {
@@ -109,4 +150,5 @@ public class CommentService {
         commentEntity.updateUser(creator);
         return commentEntity;
     }
+
 }

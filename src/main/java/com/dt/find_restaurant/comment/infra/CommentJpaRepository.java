@@ -14,4 +14,6 @@ public interface CommentJpaRepository extends JpaRepository<Comment, UUID> {
     List<Comment> findAllByPinId(UUID pinId);
 
     List<Comment> findByPinId(UUID pinId);
+
+    String findByUserEmail(String userEmail);
 }

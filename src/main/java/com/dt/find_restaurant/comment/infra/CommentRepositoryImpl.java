@@ -3,6 +3,7 @@ package com.dt.find_restaurant.comment.infra;
 import com.dt.find_restaurant.comment.domain.Comment;
 import com.dt.find_restaurant.comment.domain.CommentRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,5 +23,20 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public List<Comment> findByPinId(UUID pinId) {
         return jpaRepository.findByPinId(pinId);
+    }
+
+    @Override
+    public String findByUserEmail(String userEmail) {
+        return jpaRepository.findByUserEmail(userEmail);
+    }
+
+    @Override
+    public Optional<Comment> findById(UUID commentId) {
+        return jpaRepository.findById(commentId);
+    }
+
+    @Override
+    public void delete(Comment commentEntity) {
+        jpaRepository.delete(commentEntity);
     }
 }

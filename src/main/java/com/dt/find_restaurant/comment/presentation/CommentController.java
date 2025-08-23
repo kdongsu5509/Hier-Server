@@ -1,8 +1,9 @@
-package com.dt.find_restaurant.comment.controller;
+package com.dt.find_restaurant.comment.presentation;
 
 import com.dt.find_restaurant.comment.application.CommentService;
 import com.dt.find_restaurant.comment.dto.CommentRequest;
 import com.dt.find_restaurant.comment.dto.CommentResponse;
+import com.dt.find_restaurant.comment.dto.CommentUpdateRequest;
 import com.dt.find_restaurant.global.response.APIResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,9 +96,100 @@ public class CommentController {
     )
     @GetMapping("/{pinId}/comments")
     public APIResponse<List<CommentResponse>> getAllCommentOfPost(@NotNull @PathVariable UUID pinId) {
-        List<CommentResponse> allCommentOfPost = commentService.getAllCommentOfPost(pinId);
+        List<CommentResponse> allCommentOfPost = commentService.getAllCommentOfPin(pinId);
         return APIResponse.success(allCommentOfPost);
     }
+
+    //UPDATE
+    @Operation(
+            summary = "댓글 수정",
+            description = "특정 댓글을 수정합니다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses(
+            value = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "댓글 수정 성공"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "404",
+                            description = "댓글이 존재하지 않음"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "403",
+                            description = "댓글 작성자가 아님"
+                    )
+            }
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "댓글 수정 요청 본문",
+            required = true,
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                    mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = CommentUpdateRequest.class)
+            )
+    )
+    @PatchMapping("/{pinId}/comments/{commentId}")
+    public void updateComment(@AuthenticationPrincipal String userEmail,
+                              @NotNull @PathVariable UUID pinId,
+                              @NotNull @PathVariable UUID commentId,
+                              @Validated @RequestBody CommentUpdateRequest updateRequest) {
+        commentService.updateComment(userEmail, pinId, commentId, updateRequest);
+    }
+
+    //UPDATE IMAGE
+    @Operation(
+            summary = "댓글 이미지 수정",
+            description = "특정 댓글의 이미지를 수정합니다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses(
+            value = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "댓글 이미지 수정 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = APIResponse.class)
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "404",
+                            description = "댓글이 존재하지 않음",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = APIResponse.class)
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "403",
+                            description = "댓글 작성자가 아님",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = APIResponse.class)
+                            )
+                    )
+            }
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "댓글 이미지 수정 요청 본문",
+            required = true,
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                    mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(
+                            implementation = List.class,
+                            example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]"
+                    )
+            )
+    )
+    @PatchMapping("/{pinId}/comments/{commentId}/images")
+    public APIResponse<Void> updateCommentImages(@AuthenticationPrincipal String userEmail,
+                                    @NotNull @PathVariable UUID pinId,
+                                    @NotNull @PathVariable UUID commentId,
+                                    @RequestBody List<String> imageUrls) {
+        commentService.updateCommentImages(userEmail, pinId, commentId, imageUrls);
+        return APIResponse.success();
+    }
+
 
     @Operation(
             summary = "댓글 삭제",
@@ -106,16 +199,35 @@ public class CommentController {
             value = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "댓글 삭제 성공"
+                            description = "댓글 삭제 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = APIResponse.class)
+                            )
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "404",
-                            description = "댓글이 존재하지 않음"
+                            description = "댓글이 존재하지 않음",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = APIResponse.class)
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "403",
+                            description = "댓글 작성자가 아님",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = APIResponse.class)
+                            )
                     )
             }
     )
     @PostMapping("/{pinId}/comments/delete/{commnetId}")
-    public void deleteComment(@NotNull @PathVariable UUID pinId, @NotNull @PathVariable UUID commnetId) {
-        commentService.deleteComment(pinId, commnetId);
+    public APIResponse<Void> deleteComment(@AuthenticationPrincipal String userEmail,
+                              @NotNull @PathVariable UUID pinId,
+                              @NotNull @PathVariable UUID commnetId) {
+        commentService.deleteComment(userEmail, pinId, commnetId);
+        return APIResponse.success();
     }
 }
