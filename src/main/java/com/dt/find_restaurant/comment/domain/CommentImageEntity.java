@@ -1,4 +1,4 @@
-package com.dt.find_restaurant.comment.repository;
+package com.dt.find_restaurant.comment.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -34,7 +34,7 @@ public class CommentImageEntity {
     @ManyToOne(fetch = LAZY)
     @JsonIgnore
     @JoinColumn(name = "comment_id")
-    private CommentEntity comment;
+    private Comment comment;
 
     // 생성자
     private CommentImageEntity(String imageUrl) {

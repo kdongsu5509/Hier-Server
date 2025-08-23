@@ -1,4 +1,4 @@
-package com.dt.find_restaurant.comment.repository;
+package com.dt.find_restaurant.comment.domain;
 
 public enum CommentType {
     NORMAL,

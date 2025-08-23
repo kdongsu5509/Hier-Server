@@ -204,7 +204,7 @@ public class LogFilter implements Filter {
             }
         }
         if (nonPrintable > 10) {
-            return "(binary or non-text content)";
+            return "(binary or non-comment content)";
         }
         try {
             return new String(content, charset);
