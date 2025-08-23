@@ -8,6 +8,7 @@ public enum CustomExcpMsgs {
     PIN_NOT_FOUND("해당 핀 정보를 찾을 수 없습니다."),
     PIN_UNAUTHORIZED("해당 핀에 대한 권한이 없습니다."),
     COMMENT_NOT_FOUND("해당 댓글 정보를 찾을 수 없습니다."),
+    COMMENT_UNAUTHORIZED("해당 댓글에 대한 권한이 없습니다."),
 
     USER_NOT_FOUND("해당 유저 정보를 찾을 수 없습니다."),
     JWT_MISSED("JWT 토큰이 누락되었습니다."),

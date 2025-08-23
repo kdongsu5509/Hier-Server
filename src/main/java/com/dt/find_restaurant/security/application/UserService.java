@@ -28,6 +28,11 @@ public class UserService {
         log.info("관리자 등록 성공");
     }
 
+    public boolean isEmailDuplicate(String email) {
+        User byEmail = userRepository.findByEmail(email);
+        return byEmail != null;
+    }
+
     private User toUser(UserDto req) {
         return User.create(
                 req.email(),
