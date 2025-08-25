@@ -10,6 +10,7 @@ import com.dt.find_restaurant.security.domain.JwtEntity;
 import com.dt.find_restaurant.security.domain.JwtRepository;
 import com.dt.find_restaurant.security.domain.JwtResult;
 import com.dt.find_restaurant.security.domain.JwtResult.Issue;
+import com.dt.find_restaurant.security.domain.User;
 import com.dt.find_restaurant.security.domain.UserRepository;
 import com.dt.find_restaurant.security.global.util.JwtUtil;
 import java.time.LocalDateTime;
@@ -53,7 +54,10 @@ public class JwtService {
         validateRefreshToken(refreshToken);
 
         String userEmail = jwtUtil.getUsername(refreshToken);
-        String role = userRepository.findByEmail(userEmail).getRole();
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new JwtException(JWT_NOT_FOUND.getMessage())
+        );
+        String role = user.getRole();
 
         String newAccessToken = jwtUtil.createAccessToken(userEmail, role);
         String newRefreshToken = jwtUtil.createRefreshToken(userEmail, role);
@@ -99,7 +103,9 @@ public class JwtService {
                 Collections.singletonList(new SimpleGrantedAuthority(role));
 
         CustomUserDetails princinpal = new CustomUserDetails(
-                userRepository.findByEmail(userEmail) // UserDetailsService를 통해 User 객체를 가져옴
+                userRepository.findByEmail(userEmail).orElseThrow(
+                        () -> new JwtException(JWT_NOT_FOUND.getMessage())
+                ) // UserDetailsService를 통해 User 객체를 가져옴
         );
 
         return new UsernamePasswordAuthenticationToken(princinpal, null, authorities);

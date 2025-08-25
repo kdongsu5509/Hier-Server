@@ -1,6 +1,7 @@
 package com.dt.find_restaurant.security.domain;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository {
@@ -10,7 +11,7 @@ public interface UserRepository {
 
     User findById(UUID id);
 
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     void deleteById(UUID id);
 
@@ -18,5 +19,5 @@ public interface UserRepository {
 
     Collection<User> findAll();
 
-    User findByUserName(String userName);
+    Optional<User> findByUserName(String userName);
 }

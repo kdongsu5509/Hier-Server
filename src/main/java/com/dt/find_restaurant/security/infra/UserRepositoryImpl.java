@@ -6,6 +6,7 @@ import com.dt.find_restaurant.global.exception.CustomExceptions.UserException;
 import com.dt.find_restaurant.security.domain.User;
 import com.dt.find_restaurant.security.domain.UserRepository;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -29,9 +30,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByEmail(String email) {
-        return UserJpaRepository.findByEmail(email)
-                .orElseThrow(() -> new UserException(USER_NOT_FOUND.getMessage() + email));
+    public Optional<User> findByEmail(String email) {
+        return UserJpaRepository.findByEmail(email);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByUserName(String userName) {
+    public Optional<User> findByUserName(String userName) {
         return UserJpaRepository.findByUserName(userName);
     }
 }

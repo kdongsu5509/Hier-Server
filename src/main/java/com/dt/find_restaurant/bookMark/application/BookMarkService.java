@@ -30,7 +30,8 @@ public class BookMarkService {
             throw new PinException(CustomExcpMsgs.PIN_NOT_FOUND.getMessage());
         }
 
-        User byEmail = userRepository.findByEmail(userEmail);
+        Optional<User> byEmail1 = userRepository.findByEmail(userEmail);
+        User byEmail = byEmail1.get();
 
         BookMark bookMark = BookMark.create(byEmail, existPin.get());
         log.info("북마크 생성: {}", bookMark);

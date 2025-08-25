@@ -18,6 +18,7 @@ import com.dt.find_restaurant.security.domain.UserRepository;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,14 +52,16 @@ public class CommentService {
                 .toList();
     }
 
-    public void updateComment(String userEmail, @NotNull UUID pinId, @NotNull UUID commentId, CommentUpdateRequest updateRequest) {
+    public void updateComment(String userEmail, @NotNull UUID pinId, @NotNull UUID commentId,
+                              CommentUpdateRequest updateRequest) {
         //1. 내가 이 댓글을 쓴게 맞는지 확인
         Comment commentEntity = validateCommentUpdateRequest(userEmail, pinId, commentId);
         //4. 댓글 수정
         commentEntity.updateComment(updateRequest.comment(), updateRequest.grade(), updateRequest.commentType());
     }
 
-    public void updateCommentImages(String userEmail, @NotNull UUID pinId, @NotNull UUID commentId, List<String> imageUrls) {
+    public void updateCommentImages(String userEmail, @NotNull UUID pinId, @NotNull UUID commentId,
+                                    List<String> imageUrls) {
         Comment commentEntity = validateCommentUpdateRequest(userEmail, pinId, commentId);
         //4. 이미지 수정
         imageUrls.stream()
@@ -104,7 +107,7 @@ public class CommentService {
 
     private void isMyComment(String userEmail) {
         String findUser = commentRepository.findByUserEmail(userEmail);
-        if(findUser == null || !findUser.equals(userEmail)) {
+        if (findUser == null || !findUser.equals(userEmail)) {
             log.info("해당 댓글의 작성자가 아닙니다. userEmail: {}, findUser: {}", userEmail, findUser);
             throw new CommentException(COMMENT_UNAUTHORIZED.getMessage());
         }
@@ -137,7 +140,10 @@ public class CommentService {
         );
 
         //사용자 조회
-        User creator = userRepository.findByEmail(userEmail);
+        Optional<User> byEmail = userRepository.findByEmail(userEmail);
+        User creator = byEmail.orElseThrow(
+                () -> new CommentException(COMMENT_UNAUTHORIZED.getMessage())
+        );
 
         Comment commentEntity = Comment.create(
                 req.comment(),
