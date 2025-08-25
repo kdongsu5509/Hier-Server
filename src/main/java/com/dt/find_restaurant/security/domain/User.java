@@ -2,6 +2,7 @@ package com.dt.find_restaurant.security.domain;
 
 import static lombok.AccessLevel.PROTECTED;
 
+import com.dt.find_restaurant.bookMark.domain.BookMark;
 import com.dt.find_restaurant.global.domain.BaseEntity;
 import com.dt.find_restaurant.pin.domain.Pin;
 import jakarta.persistence.Entity;
@@ -41,6 +42,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Pin> myPins = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<BookMark> bookMarks = new ArrayList<>();
 
     private User(String email, String password, String role, String userName, String profileImageUrl) {
         this.email = email;

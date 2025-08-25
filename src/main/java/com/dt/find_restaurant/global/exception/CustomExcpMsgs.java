@@ -14,7 +14,10 @@ public enum CustomExcpMsgs {
     JWT_MISSED("JWT 토큰이 누락되었습니다."),
     JWT_INVALID("JWT 토큰이 유효하지 않습니다."),
     JWT_NOT_FOUND("JWT 토큰이 존재하지 않습니다."),
-    JWT_EXPIRED("JWT 토큰이 만료되었습니다.");
+    JWT_EXPIRED("JWT 토큰이 만료되었습니다."),
+
+    BOOKMARK_NOT_FOUND("해당 북마크 정보를 찾을 수 없습니다."),
+    BOOKMARK_UNAUTHORIZED("해당 북마크에 대한 권한이 없습니다.");
 
     private final String message;
 
