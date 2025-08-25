@@ -17,4 +17,4 @@ white-list:
     - "/api/signup/**"             #회원가입
     - "/api/login"                  #로그인
     - "/actuator/**"                # kubernetes 헬스 체크
-    - "/image/**"                   # 이미지 업로드
+    - "/api/images/**"                   # 이미지 업로드
