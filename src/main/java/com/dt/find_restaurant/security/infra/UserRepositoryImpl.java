@@ -54,4 +54,9 @@ public class UserRepositoryImpl implements UserRepository {
     public Collection<User> findAll() {
         return UserJpaRepository.findAll();
     }
+
+    @Override
+    public User findByUserName(String userName) {
+        return UserJpaRepository.findByUserName(userName);
+    }
 }
