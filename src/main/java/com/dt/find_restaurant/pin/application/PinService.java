@@ -9,6 +9,7 @@ import com.dt.find_restaurant.pin.dto.PinDetailResponse;
 import com.dt.find_restaurant.pin.dto.PinRequest;
 import com.dt.find_restaurant.pin.dto.PinSimpleResponse;
 import com.dt.find_restaurant.pin.dto.PinUpdateRequest;
+import com.dt.find_restaurant.security.domain.User;
 import com.dt.find_restaurant.security.domain.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,10 @@ public class PinService {
 
         Category categoryObj = Category.create(req.category());
         newPin.updateCategory(categoryObj);
-        newPin.updateUser(userRepository.findByEmail(userEmail));
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new PinException(CustomExcpMsgs.USER_NOT_FOUND.getMessage() + userEmail));
+        newPin.updateUser(user);
 
         return pinRepository.saveAndReturnId(newPin);
     }
