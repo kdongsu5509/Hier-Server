@@ -17,4 +17,6 @@ public interface UserRepository {
     void update(User user);
 
     Collection<User> findAll();
+
+    User findByUserName(String userName);
 }
