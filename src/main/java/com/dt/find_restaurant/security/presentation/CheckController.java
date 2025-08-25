@@ -51,10 +51,10 @@ public class CheckController {
                     )
             }
     )
-    @PostMapping("/check/email")
+    @PostMapping("/email")
     public APIResponse<Boolean> checkEmailDuplicate(@RequestBody String email) {
-        boolean isDuplicate = userService.isEmailUnique(email);
-        return APIResponse.success(isDuplicate);
+        boolean isUniqueEmail = userService.isEmailUnique(email);
+        return APIResponse.success(isUniqueEmail);
     }
 
     @Operation(
@@ -85,7 +85,7 @@ public class CheckController {
                     )
             }
     )
-    @PostMapping("/check/name")
+    @PostMapping("/name")
     public APIResponse<Boolean> checkNameDuplicate(@RequestBody String name) {
         boolean isDuplicate = userService.isNameUnique(name);
         return APIResponse.success(isDuplicate);
