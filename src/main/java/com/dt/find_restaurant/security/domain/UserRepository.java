@@ -20,4 +20,8 @@ public interface UserRepository {
     Collection<User> findAll();
 
     Optional<User> findByUserName(String userName);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByUserName(String userName);
 }
