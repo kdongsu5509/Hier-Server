@@ -39,7 +39,7 @@ jobs:
         run: |
           echo "$SPRING_SECRET_YAML" > src/main/resources/application-secret.yaml
 
-      - name: Build with Gradle (skip tests)
+      - name: Build with Gradle (do tests internally)
         run: ./gradlew clean build
 
       - name: Configure AWS credentials
