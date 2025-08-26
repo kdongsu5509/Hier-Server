@@ -63,33 +63,10 @@ class UserServiceTest {
     @Test
     @DisplayName("isEmailUnique: 이메일이 중복되면 false를 반환한다")
     void isEmailUnique_with_notunique_email_should_return_false() {
-        // given
-        UserDto requestDto = new UserDto(
-                "test@example.com",
-                "password123",
-                "tester",
-                null
-        );
-        String rawPassword = requestDto.password();
-        String encodedPassword = "encodedPassword123";
+        given(userRepository.existsByUserName("tester"))
+                .willReturn(Boolean.TRUE); // 이미 존재하는 사용자 이름
 
-        User existingUser = User.create(
-                requestDto.email(),
-                encodedPassword,
-                "USER",
-                requestDto.username(),
-                requestDto.profileImageUrl()
-        );
-
-        // passwordEncoder.encode()가 호출되면 미리 정의된 암호화된 비밀번호를 반환하도록 설정
-        given(passwordEncoder.encode(rawPassword)).willReturn(encodedPassword);
-        given(userRepository.findByUserName(requestDto.username()))
-                .willReturn(java.util.Optional.of(existingUser));
-        // 저장
-        userService.signUp(requestDto);
-
-        // when,then
-        boolean nameUnique = userService.isNameUnique(requestDto.username());
+        boolean nameUnique = userService.isNameUnique("tester");
 
         assertThat(nameUnique).isFalse();
 
