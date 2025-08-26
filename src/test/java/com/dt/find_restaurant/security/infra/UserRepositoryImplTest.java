@@ -184,4 +184,18 @@ class UserRepositoryImplTest {
                     .hasMessage(USER_NOT_FOUND.getMessage() + testUuid);
         }
     }
+
+    @Test
+    @DisplayName("findByUserName: 존재하는 사용자명으로 조회 시 User 객체를 반환한다")
+    void findByUserName_existing_userName_return_user() {
+        // given
+        String testUserName = testUser.getUserName();
+        given(userJpaRepository.findByUserName(testUserName)).willReturn(Optional.of(testUser));
+
+        // when
+        Optional<User> foundUser = userRepository.findByUserName(testUserName);
+
+        // then
+        assertThat(foundUser.get()).isEqualTo(testUser);
+    }
 }

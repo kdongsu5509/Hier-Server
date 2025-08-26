@@ -3,7 +3,6 @@ package com.dt.find_restaurant.security.application;
 import com.dt.find_restaurant.security.domain.User;
 import com.dt.find_restaurant.security.domain.UserRepository;
 import com.dt.find_restaurant.security.presentation.dto.UserDto;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,8 +29,15 @@ public class UserService {
     }
 
     public boolean isEmailUnique(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        return user.isEmpty(); // 이메일이 존재하지 않으면 중복되지 않음
+        boolean isExist = userRepository.existsByEmail(email.trim());
+        log.info("isEmailExist: {}", isExist);
+        return !isExist; // 이메일이 존재하지 않으면 중복되지 않음
+    }
+
+    public boolean isNameUnique(String name) {
+        boolean isExist = userRepository.existsByUserName(name.trim());
+        log.info("isNameExist: {}", isExist);
+        return !isExist;
     }
 
     private User toUser(UserDto req) {
@@ -57,10 +63,5 @@ public class UserService {
 
     private String encodePassword(UserDto req) {
         return passwordEncoder.encode(req.password());
-    }
-
-    public boolean isNameUnique(String name) {
-        Optional<User> findUser = userRepository.findByUserName(name);
-        return findUser.isEmpty();
     }
 }

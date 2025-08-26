@@ -2,10 +2,12 @@ package com.dt.find_restaurant.security.presentation;
 
 import com.dt.find_restaurant.global.response.APIResponse;
 import com.dt.find_restaurant.security.application.UserService;
+import com.dt.find_restaurant.security.presentation.dto.TargetDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +34,7 @@ public class CheckController {
             required = true,
             content = @io.swagger.v3.oas.annotations.media.Content(
                     mediaType = "application/json",
-                    schema = @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "test@test.com")
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = TargetDto.class)
             )
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponses(
@@ -52,8 +54,8 @@ public class CheckController {
             }
     )
     @PostMapping("/email")
-    public APIResponse<Boolean> checkEmailDuplicate(@RequestBody String email) {
-        boolean isUniqueEmail = userService.isEmailUnique(email);
+    public APIResponse<Boolean> checkEmailDuplicate(@Validated @RequestBody TargetDto target) {
+        boolean isUniqueEmail = userService.isEmailUnique(target.target());
         return APIResponse.success(isUniqueEmail);
     }
 
@@ -66,7 +68,7 @@ public class CheckController {
             required = true,
             content = @io.swagger.v3.oas.annotations.media.Content(
                     mediaType = "application/json",
-                    schema = @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "이순실")
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "이순신")
             )
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponses(
@@ -86,8 +88,8 @@ public class CheckController {
             }
     )
     @PostMapping("/name")
-    public APIResponse<Boolean> checkNameDuplicate(@RequestBody String name) {
-        boolean isDuplicate = userService.isNameUnique(name);
+    public APIResponse<Boolean> checkNameDuplicate(@Validated @RequestBody TargetDto target) {
+        boolean isDuplicate = userService.isNameUnique(target.target());
         return APIResponse.success(isDuplicate);
     }
 }

@@ -5,6 +5,7 @@ import static lombok.AccessLevel.PROTECTED;
 import com.dt.find_restaurant.bookMark.domain.BookMark;
 import com.dt.find_restaurant.global.domain.BaseEntity;
 import com.dt.find_restaurant.pin.domain.Pin;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,9 +33,13 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String role;
+    @Column(unique = true, nullable = false)
     private String userName;
     private String profileImageUrl;
     private boolean enabled;
