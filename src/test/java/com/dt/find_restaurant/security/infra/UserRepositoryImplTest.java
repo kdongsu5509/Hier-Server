@@ -109,16 +109,17 @@ class UserRepositoryImplTest {
         }
 
         @Test
-        @DisplayName("존재하지 않는 이메일로 조회 시 UserException을 발생시킨다")
+        @DisplayName("존재하지 않는 이메일로 조회 시 Null을 반환한다")
         void when_not_exists_email_throw_exception() {
             // given
             String notExistsEmail = "nouser@example.com";
             given(userJpaRepository.findByEmail(notExistsEmail)).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> userRepository.findByEmail(notExistsEmail))
-                    .isInstanceOf(UserException.class)
-                    .hasMessage(USER_NOT_FOUND.getMessage() + notExistsEmail);
+            Optional<User> byEmail = userRepository.findByEmail(notExistsEmail);
+
+            //then
+            assertThat(byEmail).isEmpty();
         }
     }
 
