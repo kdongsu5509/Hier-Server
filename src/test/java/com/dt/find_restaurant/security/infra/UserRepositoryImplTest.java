@@ -102,10 +102,10 @@ class UserRepositoryImplTest {
             given(userJpaRepository.findByEmail(testUser.getEmail())).willReturn(Optional.of(testUser));
 
             // when
-            User foundUser = userRepository.findByEmail(testUser.getEmail());
+            Optional<User> foundUser = userRepository.findByEmail(testUser.getEmail());
 
             // then
-            assertThat(foundUser).isEqualTo(testUser);
+            assertThat(foundUser.get()).isEqualTo(testUser);
         }
 
         @Test

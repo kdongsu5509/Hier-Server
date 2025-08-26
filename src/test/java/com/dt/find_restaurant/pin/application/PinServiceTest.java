@@ -70,7 +70,7 @@ class PinServiceTest {
         );
         UUID pinUuid = UUID.randomUUID();
 
-        given(userRepository.findByEmail(TEST_EMAIL)).willReturn(testUser);
+        given(userRepository.findByEmail(TEST_EMAIL)).willReturn(Optional.of(testUser));
         given(pinRepository.saveAndReturnId(any(Pin.class))).willReturn(pinUuid);
         given(pinRepository.findByLat(any())).willReturn(Optional.empty()); // 핀 생성 시 이미 존재하는 핀 정보가 없음을 가정
 

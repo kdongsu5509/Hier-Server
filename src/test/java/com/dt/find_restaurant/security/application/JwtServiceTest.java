@@ -116,7 +116,7 @@ class JwtServiceTest {
             given(jwtUtil.getExpirationFromToken(prevRefresh)).willReturn(LocalDateTime.now().plusDays(1));
             given(jwtRepository.findJwtByRefreshToken(prevRefresh)).willReturn(Optional.of(existingJwt));
             given(jwtUtil.getUsername(prevRefresh)).willReturn(userEmail);
-            given(userRepository.findByEmail(userEmail)).willReturn(user);
+            given(userRepository.findByEmail(userEmail)).willReturn(Optional.of(user));
             given(jwtUtil.createAccessToken(userEmail, role)).willReturn(newAccessToken);
             given(jwtUtil.createRefreshToken(userEmail, role)).willReturn(newRefreshToken);
             given(jwtRepository.save(any(JwtEntity.class))).willReturn(newJwtEntity);
@@ -198,7 +198,7 @@ class JwtServiceTest {
             User user = User.create(userEmail, "password123", "ADMIN", "test", null, true);
             given(jwtUtil.getUsername(accessToken)).willReturn(userEmail);
             given(jwtUtil.getRole(accessToken)).willReturn("ROLE_ADMIN");
-            given(userRepository.findByEmail(userEmail)).willReturn(user);
+            given(userRepository.findByEmail(userEmail)).willReturn(Optional.of(user));
 
             // when
             Authentication authentication = jwtService.getAuthentication(accessToken);
