@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.dt.find_restaurant.global.exception.CustomExceptions.UserException;
 import com.dt.find_restaurant.security.domain.User;
 import com.dt.find_restaurant.security.domain.UserRepository;
 import com.dt.find_restaurant.security.presentation.dto.UserDto;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,14 +63,14 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("isEmailUnique: 이메일이 중복되면 false를 반환한다")
+    @DisplayName("isEmailUnique: 이메일이 중복되면 exception를 터뜨린다")
     void isEmailUnique_with_notunique_email_should_return_false() {
         given(userRepository.existsByUserName("tester"))
                 .willReturn(Boolean.TRUE); // 이미 존재하는 사용자 이름
 
-        boolean nameUnique = userService.isNameUnique("tester");
-
-        assertThat(nameUnique).isFalse();
-
+        Assertions.assertThrows(
+                UserException.class,
+                () -> userService.isNameUnique("tester")
+        );
     }
 }
