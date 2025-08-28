@@ -1,5 +1,8 @@
 package com.dt.find_restaurant.security.application;
 
+import static com.dt.find_restaurant.global.exception.CustomExcpMsgs.ALREADY_EXISTS;
+
+import com.dt.find_restaurant.global.exception.CustomExceptions.UserException;
 import com.dt.find_restaurant.security.domain.User;
 import com.dt.find_restaurant.security.domain.UserRepository;
 import com.dt.find_restaurant.security.presentation.dto.UserDto;
@@ -28,16 +31,18 @@ public class UserService {
         log.info("관리자 등록 성공");
     }
 
-    public boolean isEmailUnique(String email) {
+    public void isEmailUnique(String email) {
         boolean isExist = userRepository.existsByEmail(email.trim());
-        log.info("isEmailExist: {}", isExist);
-        return !isExist; // 이메일이 존재하지 않으면 중복되지 않음
+        if (isExist) {
+            throw new UserException(ALREADY_EXISTS.getMessage());
+        }
     }
 
-    public boolean isNameUnique(String name) {
+    public void isNameUnique(String name) {
         boolean isExist = userRepository.existsByUserName(name.trim());
-        log.info("isNameExist: {}", isExist);
-        return !isExist;
+        if (isExist) {
+            throw new UserException(ALREADY_EXISTS.getMessage());
+        }
     }
 
     private User toUser(UserDto req) {

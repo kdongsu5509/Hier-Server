@@ -54,9 +54,9 @@ public class CheckController {
             }
     )
     @PostMapping("/email")
-    public APIResponse<Boolean> checkEmailDuplicate(@Validated @RequestBody TargetDto target) {
-        boolean isUniqueEmail = userService.isEmailUnique(target.target());
-        return APIResponse.success(isUniqueEmail);
+    public APIResponse<Void> checkEmailDuplicate(@Validated @RequestBody TargetDto target) {
+        userService.isEmailUnique(target.target());
+        return APIResponse.success();
     }
 
     @Operation(
@@ -88,8 +88,8 @@ public class CheckController {
             }
     )
     @PostMapping("/name")
-    public APIResponse<Boolean> checkNameDuplicate(@Validated @RequestBody TargetDto target) {
-        boolean isDuplicate = userService.isNameUnique(target.target());
-        return APIResponse.success(isDuplicate);
+    public APIResponse<Void> checkNameDuplicate(@Validated @RequestBody TargetDto target) {
+        userService.isNameUnique(target.target());
+        return APIResponse.success();
     }
 }
