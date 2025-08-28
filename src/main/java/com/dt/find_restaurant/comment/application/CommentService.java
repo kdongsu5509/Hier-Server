@@ -115,6 +115,7 @@ public class CommentService {
 
     private CommentResponse toCommentResponse(Comment comment) {
         return new CommentResponse(
+                comment.getId(),
                 comment.getComment(),
                 comment.getGrade(),
                 comment.getType(),
