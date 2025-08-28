@@ -110,6 +110,7 @@ public class PinService {
 
     private PinDetailResponse toPinDetailResponse(Pin pin) {
         return new PinDetailResponse(
+                pin.getId(),
                 pin.getPlaceName(),
                 pin.getText(),
                 pin.getKakaoMapUrl(),
