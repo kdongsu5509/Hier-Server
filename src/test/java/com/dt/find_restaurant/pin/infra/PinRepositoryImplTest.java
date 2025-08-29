@@ -43,6 +43,7 @@ class PinRepositoryImplTest {
                 DESCRIPTION,
                 MAP_URL,
                 addr,
+                "한식",
                 IMAGES
         );
 
@@ -63,6 +64,7 @@ class PinRepositoryImplTest {
                 "아주아주아주아주아주아주아주아주아주아주아주아주아주아주아주아주 맛있음",
                 "http://kakao.com/image.png",
                 addr,
+                "한식",
                 IMAGES
         );
 

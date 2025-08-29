@@ -38,6 +38,7 @@ class PinJpaRepositoryTest {
                 DESCRIPTION,
                 MAP_URL,
                 addr,
+                "한식",
                 IMAGES
         );
 

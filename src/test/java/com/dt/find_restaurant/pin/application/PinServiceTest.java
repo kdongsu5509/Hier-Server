@@ -86,12 +86,13 @@ class PinServiceTest {
     @DisplayName("여러 개의 핀의 정보 잘 가져옴")
     void getAllPins() {
         //given
-        Category restaurant = Category.create("식당");
+        String categoryName = "식당";
         Pin pin1 = Pin.createNewPin(
                 "거제 맛집 1",
                 "맛있음 1",
                 "http://kakao.com/image1.png",
                 new com.dt.find_restaurant.pin.domain.Address(35.123456, 128.123456, "경상남도 거제시 아주동"),
+                categoryName,
                 images
 
         );
@@ -100,10 +101,9 @@ class PinServiceTest {
                 "맛있음 2",
                 "http://kakao.com/image2.png",
                 new com.dt.find_restaurant.pin.domain.Address(35.654321, 128.654321, "경상남도 거제시 아주동"),
+                categoryName,
                 images
         );
-        pin1.updateCategory(restaurant);
-        pin2.updateCategory(restaurant);
         User user1 = User.create(
                 "test1@test.com",
                 "password123",
@@ -143,15 +143,15 @@ class PinServiceTest {
     @DisplayName("핀 ID로 핀 정보 조회")
     void getPinById() {
         //given
-        Category restaurant = Category.create("식당");
+        String categoryName = "식당";
         Pin pin1 = Pin.createNewPin(
                 "거제 맛집 1",
                 "맛있음 1",
                 "http://kakao.com/image1.png",
                 new com.dt.find_restaurant.pin.domain.Address(35.123456, 128.123456, "경상남도 거제시 아주동"),
+                categoryName,
                 images
         );
-        pin1.updateCategory(restaurant);
         pin1.updateUser(testUser);
         ReflectionTestUtils.setField(pin1, "id", UUID.randomUUID());
 
