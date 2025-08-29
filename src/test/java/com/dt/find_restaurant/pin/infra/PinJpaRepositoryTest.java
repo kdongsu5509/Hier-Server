@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.dt.find_restaurant.pin.domain.Address;
 import com.dt.find_restaurant.pin.domain.Pin;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,8 @@ class PinJpaRepositoryTest {
     private final String ADDRESS = "경상남도 거제시 아주동";
     private final String RESTAURANT_NAME = "거제 맛집";
     private final String DESCRIPTION = "아주아주아주아주아주아주아주아주아주아주아주아주아주아주아주아주 맛있음";
-    private final String KAKAO_MAP_URL = "http://kakao.com/image.png";
+    private final String MAP_URL = "http://kakao.com/image.png";
+    private final List<String> IMAGES = List.of("http://kakao.com/image1.png", "http://kakao.com/image2.png");
 
     @BeforeEach
     void setUp() {
@@ -34,8 +36,9 @@ class PinJpaRepositoryTest {
         Pin newPin = Pin.createNewPin(
                 RESTAURANT_NAME,
                 DESCRIPTION,
-                KAKAO_MAP_URL,
-                addr
+                MAP_URL,
+                addr,
+                IMAGES
         );
 
         pinJpaRepository.save(newPin);

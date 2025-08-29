@@ -4,6 +4,7 @@ import com.dt.find_restaurant.global.exception.CustomExceptions.PinException;
 import com.dt.find_restaurant.global.exception.CustomExcpMsgs;
 import com.dt.find_restaurant.pin.domain.Category;
 import com.dt.find_restaurant.pin.domain.Pin;
+import com.dt.find_restaurant.pin.domain.PinImageEntity;
 import com.dt.find_restaurant.pin.domain.PinRepository;
 import com.dt.find_restaurant.pin.dto.PinDetailResponse;
 import com.dt.find_restaurant.pin.dto.PinRequest;
@@ -50,7 +51,15 @@ public class PinService {
     }
 
     public PinDetailResponse getPinById(UUID pinId) {
-        return toPinDetailResponse(getRequestPinFromDatabase(pinId));
+        //1. 핀 정보 가져오기
+        Pin targetPin = getRequestPinFromDatabase(pinId);
+        //2. 해당 요청을 보낸 사용자가 이 핀을 북마크에 저장했는지 여부 확인
+        User user = targetPin.getUser();
+        boolean isUserBookMarkThisPin = user.getBookMarks()
+                .stream()
+                .anyMatch(bookMark -> bookMark.getPin().getId().equals(pinId));
+        //3. 핀 상세 정보 반환
+        return toPinDetailResponse(getRequestPinFromDatabase(pinId), isUserBookMarkThisPin);
     }
 
     public void updatePin(String userEmail, UUID pinId, PinUpdateRequest req) {
@@ -73,6 +82,8 @@ public class PinService {
     }
 
     private Pin getRequestPinFromDatabase(UUID pinId) {
+        //PIN 존재 여부 확인
+
         return pinRepository.findById(pinId).orElseThrow(
                 () -> new PinException(CustomExcpMsgs.PIN_NOT_FOUND.getMessage())
         );
@@ -97,7 +108,7 @@ public class PinService {
         return new PinSimpleResponse(
                 pin.getId(),
                 pin.getPlaceName(),
-                pin.getKakaoMapUrl(),
+                pin.getMapUrl(),
                 pin.getGrade(),
                 pin.getLikeCount(),
                 pin.getAddress(),
@@ -108,14 +119,19 @@ public class PinService {
         );
     }
 
-    private PinDetailResponse toPinDetailResponse(Pin pin) {
+    private PinDetailResponse toPinDetailResponse(Pin pin, boolean isBookMark) {
+        List<String> imageUrls = pin.getImages().stream().map(
+                PinImageEntity::getImageUrl
+        ).toList();
         return new PinDetailResponse(
                 pin.getId(),
                 pin.getPlaceName(),
                 pin.getText(),
-                pin.getKakaoMapUrl(),
+                pin.getMapUrl(),
                 pin.getGrade(),
                 pin.getLikeCount(),
+                imageUrls,
+                isBookMark,
                 pin.getCategory().getName(),
                 pin.getAddress(),
                 pin.getUser().getUserName(),

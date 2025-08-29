@@ -6,6 +6,7 @@ import static lombok.AccessLevel.PROTECTED;
 import com.dt.find_restaurant.global.util.BaseTimeEntity;
 import com.dt.find_restaurant.pin.dto.PinUpdateRequest;
 import com.dt.find_restaurant.security.domain.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +15,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +36,7 @@ public class Pin extends BaseTimeEntity {
 
     @Lob
     String text;
-    String kakaoMapUrl;
+    String mapUrl;
 
     Double grade;
 
@@ -49,18 +53,26 @@ public class Pin extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     Category category;
 
+    @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
+    private List<PinImageEntity> images = new ArrayList<>();
 
-    private Pin(String placeName, String text, String kakaoMapUrl, Double grade, Address address, Long likeCount) {
+    private Pin(String placeName, String text, String mapUrl, Double grade, Address address, Long likeCount) {
         this.placeName = placeName;
         this.text = text;
-        this.kakaoMapUrl = kakaoMapUrl;
+        this.mapUrl = mapUrl;
         this.grade = grade;
         this.address = address;
         this.likeCount = likeCount;
     }
 
-    public static Pin createNewPin(String restaurantName, String text, String kakaoMapUrl, Address address) {
-        return new Pin(restaurantName, text, kakaoMapUrl, 0D, address, 0L);
+    public static Pin createNewPin(String restaurantName, String text, String mapUrl, Address address,
+                                   List<String> imageUrls) {
+        Pin pin = new Pin(restaurantName, text, mapUrl, 0D, address, 0L);
+        for (String imageUrl : imageUrls) {
+            PinImageEntity pinImageEntity = PinImageEntity.create(imageUrl);
+            pin.updateImage(pinImageEntity);
+        }
+        return pin;
     }
 
     public void updateUser(User user) {
@@ -82,9 +94,14 @@ public class Pin extends BaseTimeEntity {
         if (req.text() != null) {
             this.text = req.text();
         }
-        if (req.kakaoMapUrl() != null) {
-            this.kakaoMapUrl = req.kakaoMapUrl();
+        if (req.mapUrl() != null) {
+            this.mapUrl = req.mapUrl();
         }
+    }
+
+    public void updateImage(PinImageEntity pinImageEntity) {
+        this.images.add(pinImageEntity);
+        pinImageEntity.setPin(this); // 연관관계 설정
     }
 
     private void updateAddressToNewAddressObject(PinUpdateRequest req) {

@@ -2,8 +2,10 @@ package com.dt.find_restaurant.pin.dto;
 
 import com.dt.find_restaurant.pin.domain.Address;
 import com.dt.find_restaurant.pin.domain.Pin;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 public record PinRequest(
         @NotNull
@@ -11,7 +13,7 @@ public record PinRequest(
         @NotNull @Min(value = 30, message = "최소 30자 이상 입력해주세요.")
         String text,
         @NotNull
-        String kakaoMapUrl,
+        String mapUrl,
         @NotNull
         Double latitude,
         @NotNull
@@ -19,7 +21,10 @@ public record PinRequest(
         @NotNull
         String koreanAddress,
         @NotNull
-        String category
+        String category,
+        @Schema(description = "Pin 사진 URL들", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
+        @NotNull
+        List<String> imageUrl
 ) {
     public Pin toPin() {
         Address newPinAddress = new Address(
@@ -30,8 +35,9 @@ public record PinRequest(
         return Pin.createNewPin(
                 restaurantName,
                 text,
-                kakaoMapUrl,
-                newPinAddress
+                mapUrl,
+                newPinAddress,
+                imageUrl
         );
     }
 }

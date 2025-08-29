@@ -10,7 +10,7 @@ import java.util.UUID;
 public record PinSimpleResponse(
         UUID id,
         String restaurantName,
-        String kakaoMapUrl,
+        String mapUrl,
         Double grade,
         Long likeCount,
         Address address,

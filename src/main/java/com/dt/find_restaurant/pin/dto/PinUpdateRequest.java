@@ -11,7 +11,7 @@ public record PinUpdateRequest(
         @Nullable
         String category,
         @Nullable
-        String kakaoMapUrl,
+        String mapUrl,
         @Nullable
         Double latitude,
         @Nullable
