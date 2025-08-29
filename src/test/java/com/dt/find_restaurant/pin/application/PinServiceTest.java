@@ -39,6 +39,7 @@ class PinServiceTest {
     private final String TEST_EMAIL = "test@example.com";
     private User testUser;
     private UUID testUuid;
+    List<String> images = List.of("http://kakao.com/image1.png", "http://kakao.com/image2.png");
 
     @BeforeEach
     void setUp() {
@@ -66,7 +67,8 @@ class PinServiceTest {
                 35.123456,
                 128.123456,
                 "경상남도 거제시 아주동",
-                "식당"
+                "식당",
+                images
         );
         UUID pinUuid = UUID.randomUUID();
 
@@ -90,13 +92,16 @@ class PinServiceTest {
                 "거제 맛집 1",
                 "맛있음 1",
                 "http://kakao.com/image1.png",
-                new com.dt.find_restaurant.pin.domain.Address(35.123456, 128.123456, "경상남도 거제시 아주동")
+                new com.dt.find_restaurant.pin.domain.Address(35.123456, 128.123456, "경상남도 거제시 아주동"),
+                images
+
         );
         Pin pin2 = Pin.createNewPin(
                 "거제 맛집 2",
                 "맛있음 2",
                 "http://kakao.com/image2.png",
-                new com.dt.find_restaurant.pin.domain.Address(35.654321, 128.654321, "경상남도 거제시 아주동")
+                new com.dt.find_restaurant.pin.domain.Address(35.654321, 128.654321, "경상남도 거제시 아주동"),
+                images
         );
         pin1.updateCategory(restaurant);
         pin2.updateCategory(restaurant);
@@ -144,7 +149,8 @@ class PinServiceTest {
                 "거제 맛집 1",
                 "맛있음 1",
                 "http://kakao.com/image1.png",
-                new com.dt.find_restaurant.pin.domain.Address(35.123456, 128.123456, "경상남도 거제시 아주동")
+                new com.dt.find_restaurant.pin.domain.Address(35.123456, 128.123456, "경상남도 거제시 아주동"),
+                images
         );
         pin1.updateCategory(restaurant);
         pin1.updateUser(testUser);
@@ -159,7 +165,7 @@ class PinServiceTest {
         assertThat(pinById).isNotNull();
         assertThat(pinById.restaurantName()).isEqualTo("거제 맛집 1");
         assertThat(pinById.text()).isEqualTo("맛있음 1");
-        assertThat(pinById.kakaoMapUrl()).isEqualTo("http://kakao.com/image1.png");
+        assertThat(pinById.mapUrl()).isEqualTo("http://kakao.com/image1.png");
         assertThat(pinById.address().getLatitude()).isEqualTo(35.123456);
         assertThat(pinById.address().getLongitude()).isEqualTo(128.123456);
         assertThat(pinById.address().getKoreanAddress()).isEqualTo("경상남도 거제시 아주동");
