@@ -13,6 +13,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
         description = "댓글 관련 API"
 )
 @RestController
-@RequestMapping("/api/pins")
+@RequestMapping("/api/comments")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -61,7 +62,7 @@ public class CommentController {
                     )
             }
     )
-    @PostMapping("/{pinId}/comments")
+    @PostMapping("/{pinId}")
     public APIResponse<UUID> createComment(@AuthenticationPrincipal String userEmail,
                                            @NotNull @PathVariable UUID pinId,
                                            @Validated @RequestBody CommentRequest comment) {
@@ -94,7 +95,7 @@ public class CommentController {
                     )
             }
     )
-    @GetMapping("/{pinId}/comments")
+    @GetMapping("/all/{pinId}")
     public APIResponse<List<CommentResponse>> getAllCommentOfPost(@NotNull @PathVariable UUID pinId) {
         List<CommentResponse> allCommentOfPost = commentService.getAllCommentOfPin(pinId);
         return APIResponse.success(allCommentOfPost);
@@ -129,7 +130,7 @@ public class CommentController {
                     schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = CommentUpdateRequest.class)
             )
     )
-    @PatchMapping("/{pinId}/comments/{commentId}")
+    @PatchMapping("/{pinId}/{commentId}")
     public void updateComment(@AuthenticationPrincipal String userEmail,
                               @NotNull @PathVariable UUID pinId,
                               @NotNull @PathVariable UUID commentId,
@@ -181,11 +182,11 @@ public class CommentController {
                     )
             )
     )
-    @PatchMapping("/{pinId}/comments/{commentId}/images")
+    @PatchMapping("/images/{pinId}/{commentId}")
     public APIResponse<Void> updateCommentImages(@AuthenticationPrincipal String userEmail,
-                                    @NotNull @PathVariable UUID pinId,
-                                    @NotNull @PathVariable UUID commentId,
-                                    @RequestBody List<String> imageUrls) {
+                                                 @NotNull @PathVariable UUID pinId,
+                                                 @NotNull @PathVariable UUID commentId,
+                                                 @RequestBody List<String> imageUrls) {
         commentService.updateCommentImages(userEmail, pinId, commentId, imageUrls);
         return APIResponse.success();
     }
@@ -223,11 +224,11 @@ public class CommentController {
                     )
             }
     )
-    @PostMapping("/{pinId}/comments/delete/{commnetId}")
+    @DeleteMapping("/{pinId}/{commentId}")
     public APIResponse<Void> deleteComment(@AuthenticationPrincipal String userEmail,
-                              @NotNull @PathVariable UUID pinId,
-                              @NotNull @PathVariable UUID commnetId) {
-        commentService.deleteComment(userEmail, pinId, commnetId);
+                                           @NotNull @PathVariable UUID pinId,
+                                           @NotNull @PathVariable UUID commentId) {
+        commentService.deleteComment(userEmail, pinId, commentId);
         return APIResponse.success();
     }
 }

@@ -89,7 +89,7 @@ public class PinController {
                     )
             }
     )
-    @GetMapping
+    @GetMapping("/all")
     public APIResponse<List<PinSimpleResponse>> getAllPins() {
         return APIResponse.success(pinService.getAllPins());
     }
