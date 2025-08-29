@@ -29,7 +29,6 @@ public class JwtFilter extends OncePerRequestFilter {
             log.info("JWT 토큰 검증 시작: {}", token);
             try {
                 if (jwtService.validateAccessToken(token)) {
-                    // 토큰이 유효하면 인증 정보를 SecurityContext에 저장합니다.
                     Authentication authentication = jwtService.getAuthentication(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     log.info("JWT 토큰 검증 성공: {}", token);

@@ -82,4 +82,8 @@ public class User extends BaseEntity {
         return new User(email, password, role, userName, profileImageUrl, enabled);
     }
 
+    public void enableUser() {
+        this.enabled = true;
+    }
+
 }

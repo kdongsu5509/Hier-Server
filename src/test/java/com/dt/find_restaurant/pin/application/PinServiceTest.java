@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import com.dt.find_restaurant.pin.domain.Category;
 import com.dt.find_restaurant.pin.domain.Pin;
 import com.dt.find_restaurant.pin.domain.PinRepository;
 import com.dt.find_restaurant.pin.dto.PinDetailResponse;

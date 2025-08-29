@@ -5,6 +5,7 @@ import com.dt.find_restaurant.comment.dto.CommentRequest;
 import com.dt.find_restaurant.comment.dto.CommentResponse;
 import com.dt.find_restaurant.comment.dto.CommentUpdateRequest;
 import com.dt.find_restaurant.global.response.APIResponse;
+import com.dt.find_restaurant.security.domain.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -63,9 +64,10 @@ public class CommentController {
             }
     )
     @PostMapping("/{pinId}")
-    public APIResponse<UUID> createComment(@AuthenticationPrincipal String userEmail,
+    public APIResponse<UUID> createComment(@AuthenticationPrincipal CustomUserDetails userDetails,
                                            @NotNull @PathVariable UUID pinId,
                                            @Validated @RequestBody CommentRequest comment) {
+        String userEmail = userDetails.getUsername();
         UUID createdCommentId = commentService.createComment(userEmail, pinId, comment);
         return APIResponse.success(createdCommentId);
     }
@@ -131,11 +133,11 @@ public class CommentController {
             )
     )
     @PatchMapping("/{pinId}/{commentId}")
-    public void updateComment(@AuthenticationPrincipal String userEmail,
+    public void updateComment(@AuthenticationPrincipal CustomUserDetails userDetails,
                               @NotNull @PathVariable UUID pinId,
                               @NotNull @PathVariable UUID commentId,
                               @Validated @RequestBody CommentUpdateRequest updateRequest) {
-        commentService.updateComment(userEmail, pinId, commentId, updateRequest);
+        commentService.updateComment(userDetails.getUsername(), pinId, commentId, updateRequest);
     }
 
     //UPDATE IMAGE
@@ -183,10 +185,11 @@ public class CommentController {
             )
     )
     @PatchMapping("/images/{pinId}/{commentId}")
-    public APIResponse<Void> updateCommentImages(@AuthenticationPrincipal String userEmail,
+    public APIResponse<Void> updateCommentImages(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                  @NotNull @PathVariable UUID pinId,
                                                  @NotNull @PathVariable UUID commentId,
                                                  @RequestBody List<String> imageUrls) {
+        String userEmail = userDetails.getUsername();
         commentService.updateCommentImages(userEmail, pinId, commentId, imageUrls);
         return APIResponse.success();
     }
@@ -225,9 +228,10 @@ public class CommentController {
             }
     )
     @DeleteMapping("/{pinId}/{commentId}")
-    public APIResponse<Void> deleteComment(@AuthenticationPrincipal String userEmail,
+    public APIResponse<Void> deleteComment(@AuthenticationPrincipal CustomUserDetails userDetails,
                                            @NotNull @PathVariable UUID pinId,
                                            @NotNull @PathVariable UUID commentId) {
+        String userEmail = userDetails.getUsername();
         commentService.deleteComment(userEmail, pinId, commentId);
         return APIResponse.success();
     }

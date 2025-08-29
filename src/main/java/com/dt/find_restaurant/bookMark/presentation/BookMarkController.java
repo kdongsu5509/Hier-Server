@@ -3,6 +3,7 @@ package com.dt.find_restaurant.bookMark.presentation;
 import com.dt.find_restaurant.bookMark.application.BookMarkService;
 import com.dt.find_restaurant.bookMark.dto.BookMarkResponseDto;
 import com.dt.find_restaurant.global.response.APIResponse;
+import com.dt.find_restaurant.security.domain.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -34,8 +35,8 @@ public class BookMarkController {
             description = "사용자가 특정 핀을 북마크합니다. 인증된 사용자의 이메일과 북마크할 핀의 ID를 받아 북마크를 생성하고, 생성된 북마크의 UUID를 반환합니다."
     )
     @PostMapping
-    public APIResponse<UUID> addBookMark(@AuthenticationPrincipal String userEmail, UUID pinId) {
-        UUID uuid = bookMarkService.addBookMark(userEmail, pinId);
+    public APIResponse<UUID> addBookMark(@AuthenticationPrincipal CustomUserDetails userDetails, UUID pinId) {
+        UUID uuid = bookMarkService.addBookMark(userDetails.getUsername(), pinId);
         return APIResponse.success(uuid);
     }
 
@@ -45,8 +46,9 @@ public class BookMarkController {
             description = "인증된 사용자의 이메일을 기반으로 해당 사용자가 추가한 모든 북마크를 조회합니다. 각 북마크는 BookMarkResponseDto 형태로 반환됩니다."
     )
     @GetMapping
-    public APIResponse<List<BookMarkResponseDto>> getAllMyBookMarks(@AuthenticationPrincipal String userEmail) {
-        List<BookMarkResponseDto> bookMarks = bookMarkService.getAllMyBookMarks(userEmail);
+    public APIResponse<List<BookMarkResponseDto>> getAllMyBookMarks(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<BookMarkResponseDto> bookMarks = bookMarkService.getAllMyBookMarks(userDetails.getUsername());
         return APIResponse.success(bookMarks);
     }
 
@@ -56,8 +58,8 @@ public class BookMarkController {
             description = "사용자가 특정 북마크를 삭제합니다. 인증된 사용자의 이메일과 삭제할 북마크의 ID를 받아 해당 북마크를 삭제합니다."
     )
     @DeleteMapping
-    public APIResponse<Void> deleteBookMark(@AuthenticationPrincipal String userEmail, UUID bookMarkId) {
-        bookMarkService.deleteBookMark(userEmail, bookMarkId);
+    public APIResponse<Void> deleteBookMark(@AuthenticationPrincipal CustomUserDetails userDetails, UUID bookMarkId) {
+        bookMarkService.deleteBookMark(userDetails.getUsername(), bookMarkId);
         return APIResponse.success();
     }
 }

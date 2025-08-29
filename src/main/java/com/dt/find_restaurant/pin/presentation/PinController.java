@@ -6,11 +6,13 @@ import com.dt.find_restaurant.pin.dto.PinDetailResponse;
 import com.dt.find_restaurant.pin.dto.PinRequest;
 import com.dt.find_restaurant.pin.dto.PinSimpleResponse;
 import com.dt.find_restaurant.pin.dto.PinUpdateRequest;
+import com.dt.find_restaurant.security.domain.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
         name = "핀",
         description = "핀 관련 API"
 )
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/pin")
@@ -63,7 +66,9 @@ public class PinController {
     )
     @PostMapping
     public APIResponse<UUID> createPin(@RequestBody @Validated PinRequest pinRequest,
-                                       @AuthenticationPrincipal String userEmail) {
+                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
+        final String userEmail = userDetails.getUsername();
+        log.info("PinController.createPin - userEmail: {}, pinRequest: {}", userEmail, pinRequest);
         UUID pinId = pinService.createPin(userEmail, pinRequest);
         return APIResponse.success(pinId);
     }
@@ -150,9 +155,10 @@ public class PinController {
     )
     @PatchMapping("{pinId}")
     public APIResponse<Void> updatePin(
-            @AuthenticationPrincipal String userEmail,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable UUID pinId,
             @RequestBody PinUpdateRequest req) {
+        final String userEmail = userDetails.getUsername();
         pinService.updatePin(userEmail, pinId, req);
         return APIResponse.success();
     }
@@ -179,7 +185,9 @@ public class PinController {
             }
     )
     @PostMapping("/delete")
-    public APIResponse<Void> deletePin(@RequestBody UUID pinId, @AuthenticationPrincipal String userEmail) {
+    public APIResponse<Void> deletePin(@RequestBody UUID pinId,
+                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
+        final String userEmail = userDetails.getUsername();
         pinService.deletePin(userEmail, pinId);
         return APIResponse.success();
     }

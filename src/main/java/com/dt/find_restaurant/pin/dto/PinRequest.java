@@ -37,6 +37,7 @@ public record PinRequest(
                 text,
                 mapUrl,
                 newPinAddress,
+                category,
                 imageUrl
         );
     }

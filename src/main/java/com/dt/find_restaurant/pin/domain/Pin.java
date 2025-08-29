@@ -16,7 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -49,25 +48,25 @@ public class Pin extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     User user;
 
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "category_id")
-    Category category;
+    String category;
 
     @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
     private List<PinImageEntity> images = new ArrayList<>();
 
-    private Pin(String placeName, String text, String mapUrl, Double grade, Address address, Long likeCount) {
+    private Pin(String placeName, String text, String mapUrl, Double grade, Address address, String category,
+                Long likeCount) {
         this.placeName = placeName;
         this.text = text;
         this.mapUrl = mapUrl;
         this.grade = grade;
         this.address = address;
+        this.category = category;
         this.likeCount = likeCount;
     }
 
-    public static Pin createNewPin(String restaurantName, String text, String mapUrl, Address address,
+    public static Pin createNewPin(String restaurantName, String text, String mapUrl, Address address, String category,
                                    List<String> imageUrls) {
-        Pin pin = new Pin(restaurantName, text, mapUrl, 0D, address, 0L);
+        Pin pin = new Pin(restaurantName, text, mapUrl, 0D, address, category, 0L);
         for (String imageUrl : imageUrls) {
             PinImageEntity pinImageEntity = PinImageEntity.create(imageUrl);
             pin.updateImage(pinImageEntity);
@@ -77,10 +76,6 @@ public class Pin extends BaseTimeEntity {
 
     public void updateUser(User user) {
         this.user = user;
-    }
-
-    public void updateCategory(Category category) {
-        this.category = category;
     }
 
     public void updatePinByUser(PinUpdateRequest req) {
