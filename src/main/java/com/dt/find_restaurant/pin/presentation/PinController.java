@@ -192,6 +192,4 @@ public class PinController {
         pinService.deletePin(userEmail, pinId);
         return APIResponse.success();
     }
-
-
 }
