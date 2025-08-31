@@ -8,22 +8,24 @@ import java.util.List;
 import org.hibernate.validator.constraints.Length;
 
 public record PinRequest(
-        @NotNull
+        @NotNull(
+                message = "음식점 이름은 필수입니다."
+        )
         String restaurantName,
-        @NotNull @Length(min = 30, message = "최소 30자 이상 입력해주세요.")
+        @NotNull(message = "글은 필수입니다.") @Length(min = 30, message = "최소 30자 이상 입력해주세요.")
         String text,
-        @NotNull
+        @NotNull(message = "지도 URL은 필수입니다.")
         String mapUrl,
-        @NotNull
+        @NotNull(message = "위도는 필수입니다.")
         Double latitude,
-        @NotNull
+        @NotNull(message = "경도는 필수입니다.")
         Double longitude,
-        @NotNull
+        @NotNull(message = "한글 주소는 필수입니다.")
         String koreanAddress,
-        @NotNull
+        @NotNull(message = "카테고리는 필수입니다.")
         String category,
         @Schema(description = "Pin 사진 URL들", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
-        @NotNull
+        @NotNull(message = "이미지 URL은 필수입니다.")
         List<String> imageUrl
 ) {
     public Pin toPin() {
