@@ -26,7 +26,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public String findByUserEmail(String userEmail) {
+    public List<Comment> findByUserEmail(String userEmail) {
         return jpaRepository.findByUserEmail(userEmail);
     }
 
@@ -39,4 +39,5 @@ public class CommentRepositoryImpl implements CommentRepository {
     public void delete(Comment commentEntity) {
         jpaRepository.delete(commentEntity);
     }
+
 }

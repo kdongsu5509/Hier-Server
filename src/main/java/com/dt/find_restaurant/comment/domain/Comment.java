@@ -3,7 +3,7 @@ package com.dt.find_restaurant.comment.domain;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 
-import com.dt.find_restaurant.global.util.BaseTimeEntity;
+import com.dt.find_restaurant.global.domain.BaseEntity;
 import com.dt.find_restaurant.pin.domain.Pin;
 import com.dt.find_restaurant.security.domain.User;
 import jakarta.persistence.CascadeType;
@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Entity
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseTimeEntity {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
@@ -73,13 +73,13 @@ public class Comment extends BaseTimeEntity {
     }
 
     public void updateComment(String comment, Double grade, CommentType type) {
-        if(comment != null) {
+        if (comment != null) {
             this.comment = comment;
         }
-        if(grade != null) {
+        if (grade != null) {
             this.grade = grade;
         }
-        if(type != null) {
+        if (type != null) {
             this.type = type;
         }
     }

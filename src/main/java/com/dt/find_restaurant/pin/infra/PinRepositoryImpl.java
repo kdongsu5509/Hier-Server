@@ -38,4 +38,9 @@ public class PinRepositoryImpl implements PinRepository {
     public void deleteById(UUID id) {
         jpaRepository.deleteById(id);
     }
+
+    @Override
+    public List<Pin> findByUserEmail(String userEmail) {
+        return List.of();
+    }
 }

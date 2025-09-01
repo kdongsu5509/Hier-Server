@@ -63,9 +63,13 @@ public class BookMarkService {
     }
 
     private BookMarkResponseDto toBookMarkResponse(BookMark bookMark) {
+        Pin pin = bookMark.getPin();
         return new BookMarkResponseDto(
-                bookMark.getPin().getId(),
-                bookMark.getPin().getPlaceName()
+                bookMark.getId(),
+                pin.getPlaceName(),
+                pin.getCategory(),
+                pin.getAddress().getKoreanAddress(),
+                bookMark.getCreatedAt()
         );
     }
 

@@ -135,4 +135,11 @@ public class PinService {
                 pin.getUpdatedAt()
         );
     }
+
+    public List<PinSimpleResponse> getMyPins(String userEmail) {
+        return pinRepository.findByUserEmail(userEmail)
+                .stream()
+                .map(this::toPinSimpleResponse)
+                .toList();
+    }
 }

@@ -71,7 +71,7 @@ public class CommentService {
 
     private Comment validateCommentUpdateRequest(String userEmail, UUID pinId, UUID commentId) {
         //1. 내가 이 댓글을 쓴게 맞는지 확인
-        isMyComment(userEmail);
+        isMyComment(userEmail, commentId);
 
         //2. commentId로 댓글 조회
         Comment commentEntity = commentRepository.findById(commentId)
@@ -105,10 +105,16 @@ public class CommentService {
         }
     }
 
-    private void isMyComment(String userEmail) {
-        String findUser = commentRepository.findByUserEmail(userEmail);
-        if (findUser == null || !findUser.equals(userEmail)) {
-            log.info("해당 댓글의 작성자가 아닙니다. userEmail: {}, findUser: {}", userEmail, findUser);
+    private void isMyComment(String userEmail, UUID commentId) {
+        List<Comment> byUserEmail = commentRepository.findByUserEmail(userEmail);
+        if (byUserEmail.isEmpty()) {
+            log.info("해당 사용자가 작성한 댓글이 없습니다. userEmail: {}", userEmail);
+            throw new CommentException(COMMENT_UNAUTHORIZED.getMessage());
+        }
+        boolean isMyComment = byUserEmail.stream()
+                .anyMatch(comment -> comment.getId().toString().equals(commentId.toString()));
+        if (!isMyComment) {
+            log.info("해당 사용자가 작성한 댓글이 아닙니다. userEmail: {}, commentId: {}", userEmail, commentId);
             throw new CommentException(COMMENT_UNAUTHORIZED.getMessage());
         }
     }
@@ -158,4 +164,10 @@ public class CommentService {
         return commentEntity;
     }
 
+    public List<CommentResponse> getAllMyComments(String userEmail) {
+        List<Comment> byUserEmail = commentRepository.findByUserEmail(userEmail);
+        return byUserEmail.stream()
+                .map(this::toCommentResponse)
+                .toList();
+    }
 }

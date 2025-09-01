@@ -8,6 +8,7 @@ import com.dt.find_restaurant.pin.dto.PinSimpleResponse;
 import com.dt.find_restaurant.pin.dto.PinUpdateRequest;
 import com.dt.find_restaurant.security.domain.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
@@ -123,6 +124,32 @@ public class PinController {
     @GetMapping("{pinId}")
     public APIResponse<PinDetailResponse> getPinById(@PathVariable UUID pinId) {
         return APIResponse.success(pinService.getPinById(pinId));
+    }
+
+    @Operation(
+            summary = "내가 작성한 핀 조회",
+            description = "인증된 사용자의 이메일을 기반으로 해당 사용자가 작성한 모든 핀을 조회합니다. 각 핀은 PinSimpleResponse 형태로 반환됩니다."
+    )
+    @ApiResponses(
+            value = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "내가 작성한 핀 조회 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PinSimpleResponse.class)
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "잘못된 요청"
+                    )
+            }
+    )
+    @GetMapping("/my")
+    public APIResponse<List<PinSimpleResponse>> getMyPins(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        final String userEmail = userDetails.getUsername();
+        return APIResponse.success(pinService.getMyPins(userEmail));
     }
 
     //UPDATE

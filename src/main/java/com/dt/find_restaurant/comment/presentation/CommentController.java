@@ -7,6 +7,7 @@ import com.dt.find_restaurant.comment.dto.CommentUpdateRequest;
 import com.dt.find_restaurant.global.response.APIResponse;
 import com.dt.find_restaurant.security.domain.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -101,6 +102,29 @@ public class CommentController {
     public APIResponse<List<CommentResponse>> getAllCommentOfPost(@NotNull @PathVariable UUID pinId) {
         List<CommentResponse> allCommentOfPost = commentService.getAllCommentOfPin(pinId);
         return APIResponse.success(allCommentOfPost);
+    }
+
+    @Operation(
+            summary = "내가 작성한 모든 댓글 조회",
+            description = "인증된 사용자가 작성한 모든 댓글을 조회합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "내가 작성한 댓글 목록 조회 성공",
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = "application/json",
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping("/my")
+    public APIResponse<List<CommentResponse>> getAllMyComments(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        String userEmail = userDetails.getUsername();
+        List<CommentResponse> myComments = commentService.getAllMyComments(userEmail);
+        return APIResponse.success(myComments);
     }
 
     //UPDATE

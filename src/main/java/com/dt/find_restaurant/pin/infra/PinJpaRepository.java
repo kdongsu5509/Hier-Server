@@ -19,4 +19,7 @@ public interface PinJpaRepository extends JpaRepository<Pin, UUID> {
     @Override
     @EntityGraph(attributePaths = {"user", "category"})
     Optional<Pin> findById(UUID id);
+
+    @EntityGraph(attributePaths = {"user", "category"})
+    List<Pin> findByUserEmail(String email);
 }

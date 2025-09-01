@@ -3,7 +3,7 @@ package com.dt.find_restaurant.pin.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-import com.dt.find_restaurant.global.util.BaseTimeEntity;
+import com.dt.find_restaurant.global.domain.BaseEntity;
 import com.dt.find_restaurant.pin.dto.PinUpdateRequest;
 import com.dt.find_restaurant.security.domain.User;
 import jakarta.persistence.CascadeType;
@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class Pin extends BaseTimeEntity {
+public class Pin extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

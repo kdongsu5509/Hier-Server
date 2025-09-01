@@ -16,4 +16,6 @@ public interface PinRepository {
     List<Pin> findAll();
 
     void deleteById(UUID id);
+
+    List<Pin> findByUserEmail(String userEmail);
 }

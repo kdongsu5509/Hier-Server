@@ -3,6 +3,7 @@ package com.dt.find_restaurant.bookMark.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.dt.find_restaurant.global.domain.BaseEntity;
 import com.dt.find_restaurant.pin.domain.Pin;
 import com.dt.find_restaurant.security.domain.User;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class BookMark {
+public class BookMark extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
