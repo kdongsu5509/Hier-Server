@@ -22,6 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional // 테스트 후 DB 롤백을 보장합니다.
 class EmailAccountControllerTest {
 
+    private final String BASE_URL = "/api/security";
+
     @Autowired
     private WebApplicationContext context;
 
@@ -44,7 +46,7 @@ class EmailAccountControllerTest {
         EmailSignUpDto requestDto = new EmailSignUpDto("test@example.com", "testuser", "password123");
 
         // When & Then
-        mockMvc.perform(post("/api/signup")
+        mockMvc.perform(post(BASE_URL + "/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
@@ -58,7 +60,7 @@ class EmailAccountControllerTest {
         EmailCheckDto emailCheckDto = new EmailCheckDto("unique@test.com");
 
         // When & Then
-        mockMvc.perform(post("/api/signup/check-email")
+        mockMvc.perform(post(BASE_URL + "/check-email")
                         .content(objectMapper.writeValueAsString(emailCheckDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").value(true))
@@ -72,14 +74,14 @@ class EmailAccountControllerTest {
         String email = "notUnique@test.com";
 
         EmailSignUpDto requestDto = new EmailSignUpDto(email, "testuser", "password123");
-        mockMvc.perform(post("/api/signup")
+        mockMvc.perform(post(BASE_URL + "/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)));
 
         EmailCheckDto emailCheckDto = new EmailCheckDto(email);
 
         // When & Then
-        mockMvc.perform(post("/api/signup/check-email")
+        mockMvc.perform(post(BASE_URL +"/check-email")
                         .content(objectMapper.writeValueAsString(emailCheckDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").value(false))

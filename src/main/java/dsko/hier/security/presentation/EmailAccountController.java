@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/signup")
+@RequestMapping("/api/security")
 @RequiredArgsConstructor
 public class EmailAccountController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/signup")
     public APIResponse<UUID> signUpViaEmailAndPassword(@Validated @RequestBody EmailSignUpDto req) {
         UUID newUserId = userService.signUp(req);
         return APIResponse.success(newUserId);
