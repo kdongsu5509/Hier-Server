@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.6'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
 }
 
 group = 'dsko'
@@ -65,6 +66,7 @@ dependencies {
 }
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 //------------------ QueryDSL 설정 ------------------
@@ -81,4 +83,73 @@ sourceSets {
 
 clean.doLast {
     file(querydslDir).deleteDir()
+}
+
+//-----------JaCoCo 설정 ----------------
+
+jacoco {
+    toolVersion = "0.8.13" // https://www.jacoco.org/jacoco/trunk/doc/changes.html
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+    }
+
+    def QDomains = []
+    for (qPattern in '**/QA'..'**/QZ') {
+        QDomains.add(qPattern + '*')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            '**/*Application.class',
+                            '**/*Config.class',
+                            '**/*Dto.class',
+                            '**/*Request.class',
+                            '**/*Response.class',
+                            '**/*Interceptor.class',
+                            '**/*Exception.class',
+                            '**/domain/**', // domain 디렉토리 하위의 모든 클래스 제외
+                            '**/dto/**', // dto 디렉토리 하위의 모든 클래스 제외
+                    ] + QDomains)
+                })
+        )
+    }
+    finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+    def QDomains = []
+    for (qPattern in '*.QA'..'*.QZ') {
+        QDomains.add(qPattern + '*')
+    }
+
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            excludes = [
+                    '**.*Application*',
+                    '**.*Config*',
+                    '**.*Dto*',
+                    '**.*Request*',
+                    '**.*Response*',
+                    '**.*Interceptor*',
+                    '**.*Exception*',
+                    '**.*domain.*', // 모든 domain 패키지 제외
+                    '**.*dto.*', // 모든 dto 패키지 제외
+            ] + QDomains
+        }
+    }
 }
