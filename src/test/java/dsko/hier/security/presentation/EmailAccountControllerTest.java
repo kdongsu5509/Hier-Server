@@ -52,8 +52,8 @@ class EmailAccountControllerTest {
     }
 
     @Test
-    @DisplayName("[이메일 중복 체크] : 중복된 이메일이 없으면 200 OK 반환")
-    void checkEmailNotDuplicate_success() throws Exception {
+    @DisplayName("[이메일 중복 체크] : 중복된 이메일이 없으면 200 OK와 true 반환")
+    void checkEmailNotDuplicate_success_with_true() throws Exception {
         // Given
         EmailCheckDto emailCheckDto = new EmailCheckDto("unique@test.com");
 
@@ -61,6 +61,28 @@ class EmailAccountControllerTest {
         mockMvc.perform(post("/api/signup/check-email")
                         .content(objectMapper.writeValueAsString(emailCheckDto))
                         .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.data").value(true))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[이메일 중복 체크] : 중복된 이메일이 있으면 200 OK와 false 반환")
+    void checkEmailNotDuplicate_success_but_false() throws Exception {
+        // Given
+        String email = "notUnique@test.com";
+
+        EmailSignUpDto requestDto = new EmailSignUpDto(email, "testuser", "password123");
+        mockMvc.perform(post("/api/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)));
+
+        EmailCheckDto emailCheckDto = new EmailCheckDto(email);
+
+        // When & Then
+        mockMvc.perform(post("/api/signup/check-email")
+                        .content(objectMapper.writeValueAsString(emailCheckDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.data").value(false))
                 .andExpect(status().isOk());
     }
 }
