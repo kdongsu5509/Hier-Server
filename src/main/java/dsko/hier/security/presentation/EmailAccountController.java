@@ -28,7 +28,7 @@ public class EmailAccountController {
     }
 
     @PostMapping("/check-email")
-    public APIResponse<Boolean> checkEmailDuplicate(@RequestBody EmailCheckDto req) {
-        return APIResponse.success(true);
+    public APIResponse<Boolean> checkEmailDuplicate(@Validated @RequestBody EmailCheckDto req) {
+        return APIResponse.success(userService.isDuplicateEmail(req.email()));
     }
 }
