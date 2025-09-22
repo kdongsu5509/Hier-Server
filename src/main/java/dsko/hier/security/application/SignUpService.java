@@ -5,8 +5,7 @@ import dsko.hier.security.domain.EmailPasswordAccountRepository;
 import dsko.hier.security.domain.User;
 import dsko.hier.security.domain.UserRepository;
 import dsko.hier.security.domain.UserRole;
-import dsko.hier.security.dto.EmailSignUpDto;
-import java.util.Optional;
+import dsko.hier.security.dto.request.EmailSignUpDto;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserService {
+public class SignUpService {
 
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;

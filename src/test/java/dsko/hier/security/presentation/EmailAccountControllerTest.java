@@ -1,8 +1,8 @@
 package dsko.hier.security.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dsko.hier.security.dto.EmailCheckDto;
-import dsko.hier.security.dto.EmailSignUpDto;
+import dsko.hier.security.dto.request.EmailCheckDto;
+import dsko.hier.security.dto.request.EmailSignUpDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
