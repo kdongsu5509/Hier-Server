@@ -115,6 +115,7 @@ jacocoTestReport {
                             '**/*Exception.class',
                             '**/domain/**', // domain 디렉토리 하위의 모든 클래스 제외
                             '**/dto/**', // dto 디렉토리 하위의 모든 클래스 제외
+                            '**.*config.*', // 모든 config 패키지 제외
                     ] + QDomains)
                 })
         )
@@ -149,6 +150,7 @@ jacocoTestCoverageVerification {
                     '**.*Exception*',
                     '**.*domain.*', // 모든 domain 패키지 제외
                     '**.*dto.*', // 모든 dto 패키지 제외
+                    '**.*config.*', // 모든 config 패키지 제외
             ] + QDomains
         }
     }

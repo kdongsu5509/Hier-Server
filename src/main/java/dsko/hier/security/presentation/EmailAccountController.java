@@ -17,14 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/signup")
 @RequiredArgsConstructor
 public class EmailAccountController {
-    //CREATE -> 회원 가입
 
     private final UserService userService;
 
     @PostMapping
-    public APIResponse<UUID> signUp(@Validated @RequestBody EmailSignUpDto req) {
+    public APIResponse<UUID> signUpViaEmailAndPassword(@Validated @RequestBody EmailSignUpDto req) {
         UUID newUserId = userService.signUp(req);
         return APIResponse.success(newUserId);
     }
-
 }
