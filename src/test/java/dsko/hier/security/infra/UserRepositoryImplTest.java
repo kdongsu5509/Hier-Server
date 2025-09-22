@@ -63,4 +63,39 @@ class UserRepositoryImplTest {
         // Then
         assertThat(foundUser).isPresent();
     }
+
+    @Test
+    @DisplayName("이메일로 사용자 조회 성공")
+    void findByEmail_success() {
+        // Given
+        String email = "user@user.com";
+        User user = User.builder()
+                .email(email)
+                .nickname("testuser")
+                .role(UserRole.USER)
+                .build();
+
+        when(userJpaRepository.findByEmail(email)).thenReturn(Optional.of(user));
+
+        // When
+        Optional<User> foundUser = userRepository.findByEmail(email);
+
+        // Then
+        assertThat(foundUser).isPresent();
+        assertThat(foundUser.get().getEmail()).isEqualTo(email);
+    }
+
+    @Test
+    @DisplayName("이메일로 사용자 조회 실패 - 사용자 없음")
+    void findByEmail_notFound() {
+        // Given
+        String email = "notExist@user.com";
+        when(userJpaRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        // When
+        Optional<User> foundUser = userRepository.findByEmail(email);
+
+        // Then
+        assertThat(foundUser).isNotPresent();
+    }
 }

@@ -6,6 +6,7 @@ import dsko.hier.security.domain.User;
 import dsko.hier.security.domain.UserRepository;
 import dsko.hier.security.domain.UserRole;
 import dsko.hier.security.dto.EmailSignUpDto;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,5 +45,9 @@ public class UserService {
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    public boolean isDuplicateEmail(String email) {
+        return !userRepository.findByEmail(email).isPresent();
     }
 }

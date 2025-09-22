@@ -12,6 +12,7 @@ import dsko.hier.security.domain.User;
 import dsko.hier.security.domain.UserRepository;
 import dsko.hier.security.domain.UserRole;
 import dsko.hier.security.dto.EmailSignUpDto;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,5 +67,40 @@ class UserServiceTest {
         verify(passwordEncoder, times(1)).encode(any(String.class));
         verify(userRepository, times(1)).save(any(User.class));
         verify(emailPasswordAccountRepository, times(1)).save(any(EmailPasswordAccount.class));
+    }
+
+    @Test
+    @DisplayName("이메일 중복 체크 : 이메일 중복이 없으면 true 반환")
+    void checkEmailNotDuplicate_success() {
+        //Given
+        String email = "unique@test.com";
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        //When
+        boolean isDuplicate = userService.isDuplicateEmail(email);
+
+        //Then
+        assertThat(isDuplicate).isTrue();
+        verify(userRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    @DisplayName("이메일 중복 체크 : 이메일이 이미 존재하면 false 반환")
+    void checkEmailDuplicate_failure() {
+        String email = "duplicate@test.com";
+        User existingUser = User.builder()
+                .email(email)
+                .nickname("existingUser")
+                .role(UserRole.USER)
+                .build();
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
+
+        // When
+        boolean isDuplicate = userService.isDuplicateEmail(email);
+
+        // Then
+        assertThat(isDuplicate).isFalse();
+        verify(userRepository, times(1)).findByEmail(email);
     }
 }

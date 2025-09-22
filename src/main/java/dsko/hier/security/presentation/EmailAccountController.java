@@ -2,6 +2,7 @@ package dsko.hier.security.presentation;
 
 import dsko.hier.global.response.APIResponse;
 import dsko.hier.security.application.UserService;
+import dsko.hier.security.dto.EmailCheckDto;
 import dsko.hier.security.dto.EmailSignUpDto;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,10 @@ public class EmailAccountController {
     public APIResponse<UUID> signUpViaEmailAndPassword(@Validated @RequestBody EmailSignUpDto req) {
         UUID newUserId = userService.signUp(req);
         return APIResponse.success(newUserId);
+    }
+
+    @PostMapping("/check-email")
+    public APIResponse<Boolean> checkEmailDuplicate(@RequestBody EmailCheckDto req) {
+        return APIResponse.success(true);
     }
 }
