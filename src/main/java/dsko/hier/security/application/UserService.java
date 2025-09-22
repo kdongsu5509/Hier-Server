@@ -6,7 +6,6 @@ import dsko.hier.security.domain.User;
 import dsko.hier.security.domain.UserRepository;
 import dsko.hier.security.domain.UserRole;
 import dsko.hier.security.dto.EmailSignUpDto;
-import jakarta.persistence.EntityManager;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final EmailPasswordAccountRepository emailPasswordAccountRepository;
-    private final EntityManager em;
 
     public UUID signUp(EmailSignUpDto req) {
         //1. User(간단한 정보) 생성
@@ -36,7 +34,6 @@ public class UserService {
         );
 
         //2. EmailPasswordAccount 생성
-
         return emailPasswordAccountRepository.save(
                 EmailPasswordAccount.builder()
                         .user(savedSimpleUser)
