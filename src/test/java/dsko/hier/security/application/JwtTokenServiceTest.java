@@ -79,7 +79,7 @@ class JwtTokenServiceTest {
         // Then
         Assertions.assertThat(response.accessToken()).isEqualTo(newTokens.accessToken());
         Assertions.assertThat(response.refreshToken()).isEqualTo(newTokens.refreshToken());
-        verify(redisService, times(2)).getRefreshToken(username); // 조건 검증 시 null 체크 + 값 검증 위해 2번 호출
+        verify(redisService, times(1)).getRefreshToken(username);
     }
 
     @Test

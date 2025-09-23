@@ -41,8 +41,8 @@ public class JwtTokenService {
             throw new IllegalArgumentException("Expired refresh token");
         }
         // 2. Redis에 저장된 리프레시 토큰과 일치하는지 확인
-        if (redisService.getRefreshToken(username) == null || !redisService.getRefreshToken(username)
-                .equals(refreshToken)) {
+        String refreshTokenFromRedis = redisService.getRefreshToken(username);
+        if (refreshTokenFromRedis == null || !refreshTokenFromRedis.equals(refreshToken)) {
             throw new IllegalArgumentException("Invalid refresh token");
         }
 

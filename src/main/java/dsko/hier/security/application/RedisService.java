@@ -1,6 +1,5 @@
 package dsko.hier.security.application;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,7 @@ public class RedisService {
     }
 
     public boolean isTokenBlacklisted(String tokenJti) {
-        return Boolean.TRUE.equals(Objects.requireNonNull(redisTemplate.hasKey(BLACKLIST_PREFIX + tokenJti)));
+        return Boolean.TRUE.equals(redisTemplate.hasKey(BLACKLIST_PREFIX + tokenJti));
     }
 
     public void clearAll() {
