@@ -11,9 +11,8 @@ import dsko.hier.security.domain.EmailPasswordAccountRepository;
 import dsko.hier.security.domain.User;
 import dsko.hier.security.domain.UserRepository;
 import dsko.hier.security.domain.UserRole;
-import dsko.hier.security.dto.EmailSignUpDto;
+import dsko.hier.security.dto.request.EmailSignUpDto;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class SignUpServiceTest {
 
     @Mock
     UserRepository userRepository;
@@ -35,7 +34,7 @@ class UserServiceTest {
     BCryptPasswordEncoder passwordEncoder;
 
     @InjectMocks
-    UserService userService;
+    SignUpService signUpService;
 
     @Test
     @DisplayName("회원가입 성공 시, UUID 반환 및 저장 메서드가 호출된다")
@@ -61,7 +60,7 @@ class UserServiceTest {
         when(emailPasswordAccountRepository.save(any(EmailPasswordAccount.class))).thenReturn(mockAccount);
 
         // When
-        userService.signUp(request); // UUID 반환값은 여기서 사용하지 않음 : JPA가 자동 생성해줌
+        signUpService.signUp(request); // UUID 반환값은 여기서 사용하지 않음 : JPA가 자동 생성해줌
 
         // Then
         verify(passwordEncoder, times(1)).encode(any(String.class));
@@ -77,7 +76,7 @@ class UserServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         //When
-        boolean isDuplicate = userService.isDuplicateEmail(email);
+        boolean isDuplicate = signUpService.isDuplicateEmail(email);
 
         //Then
         assertThat(isDuplicate).isTrue();
@@ -97,7 +96,7 @@ class UserServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
 
         // When
-        boolean isDuplicate = userService.isDuplicateEmail(email);
+        boolean isDuplicate = signUpService.isDuplicateEmail(email);
 
         // Then
         assertThat(isDuplicate).isFalse();
