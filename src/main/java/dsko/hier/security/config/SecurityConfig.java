@@ -1,17 +1,24 @@
 package dsko.hier.security.config;
 
+import dsko.hier.security.application.CustomUserDetailService;
+import dsko.hier.security.application.JwtTokenProvider;
+import dsko.hier.security.application.RedisService;
+import dsko.hier.security.filter.JwtAuthenticationFilter;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -20,9 +27,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthenticationConfiguration authenticationConfiguration;
-    //    private final JwtService jwtService;
     private final WhiteListProperties whiteListProperties;
+    private final UserDetailsService customUserDetailService;
+    private final JwtTokenProvider tokenProvider;
+    private final RedisService redisService;
+    private final CustomUserDetailService userDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,25 +48,30 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout.logoutSuccessUrl("/logout"));
-//        addCustomFilters(http);
-
+        http.addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-//    private void addCustomFilters(HttpSecurity http) throws Exception {
-//        AuthenticationManager authenticationManager = authenticationManager(authenticationConfiguration);
-//
-//        http.addFilterBefore(new LoggingFilter(), UsernamePasswordAuthenticationFilter.class);
-//
-//        http.addFilterAt(new LoginFilter(authenticationManager, jwtService),
-//                UsernamePasswordAuthenticationFilter.class);
-//
-//        http.addFilterBefore(new JwtFilter(jwtService), LoginFilter.class);
-//    }
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(tokenProvider, redisService, userDetailsService);
+    }
+
+    // DaoAuthenticationProvider 빈을 정의합니다.
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailService);
+        provider.setPasswordEncoder(bCryptPasswordEncoder());
+        return provider;
+    }
+
+    // AuthenticationManager를 직접 구성하여 DaoAuthenticationProvider를 추가합니다.
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(daoAuthenticationProvider());
+        return authenticationManagerBuilder.build();
     }
 
     @Bean

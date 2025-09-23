@@ -7,7 +7,6 @@ import dsko.hier.security.dto.request.EmailAndPassword;
 import dsko.hier.security.dto.request.EmailCheckDto;
 import dsko.hier.security.dto.request.EmailSignUpDto;
 import dsko.hier.security.dto.response.TokenResponse;
-import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/security")
+@RequestMapping("/api/security/email")
 @RequiredArgsConstructor
 public class EmailAccountController {
 
@@ -39,7 +38,7 @@ public class EmailAccountController {
 
     @PostMapping("/login")
     public APIResponse<TokenResponse> loginWithEmailAndPassword(@Validated @RequestBody EmailAndPassword req) {
-        loginService.emailAndPasswordLogin(req);
-        return null;
+        TokenResponse tokenResponse = loginService.emailAndPasswordLogin(req);
+        return APIResponse.success(tokenResponse);
     }
 }

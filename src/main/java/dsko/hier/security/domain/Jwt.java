@@ -1,6 +1,7 @@
 package dsko.hier.security.domain;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -24,5 +25,12 @@ public class Jwt {
     @NotNull
     @ToString.Include
     private String refreshToken;
+
+    @Builder
+    public Jwt(String id, String accessToken, String refreshToken) {
+        this.id = id;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
 
 }

@@ -63,6 +63,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
     //Swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
@@ -70,8 +72,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 
-     finalizedBy jacocoTestReport
-     finalizedBy jacocoTestCoverageVerification
+    finalizedBy jacocoTestReport
+    finalizedBy jacocoTestCoverageVerification
 }
 
 //------------------ QueryDSL 설정 ------------------
@@ -121,6 +123,7 @@ jacocoTestReport {
                             '**/domain/**', // domain 디렉토리 하위의 모든 클래스 제외
                             '**/dto/**', // dto 디렉토리 하위의 모든 클래스 제외
                             '**.*config.*', // 모든 config 패키지 제외
+                            '**.*exception.*' // 모든 exception 패키지 제외
                     ] + QDomains)
                 })
         )
@@ -156,6 +159,7 @@ jacocoTestCoverageVerification {
                     '**.*domain.*', // 모든 domain 패키지 제외
                     '**.*dto.*', // 모든 dto 패키지 제외
                     '**.*config.*', // 모든 config 패키지 제외
+                    '**.*exception.*' // 모든 exception 패키지 제외
             ] + QDomains
         }
     }

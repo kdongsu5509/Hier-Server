@@ -2,8 +2,6 @@ package dsko.hier.security.application;
 
 import dsko.hier.security.domain.EmailPasswordAccount;
 import dsko.hier.security.domain.EmailPasswordAccountRepository;
-import dsko.hier.security.domain.User;
-import dsko.hier.security.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +23,6 @@ public class CustomUserDetailService implements UserDetailsService {
                         () -> new UsernameNotFoundException(
                                 "EmailPasswordAccount not found for user with email: " + username)
                 );
-
         return new CustomUserDetails(emailPasswordAccount);
     }
 }
